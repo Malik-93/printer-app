@@ -1,10 +1,11 @@
 {
-    "exec": "ts-node index.ts",
+    "exec": "tsc --skipLibCheck && copyfiles index.html dist && electron dist/main.js",
     "watch": [
         "./"
     ],
-    "ext": "ts,js",
+    "ext": "ts,js,html",
     "ignore": [
-        "*.spec.ts"
+        "*.spec.ts",
+        "dist/"
     ]
 }
