@@ -14,7 +14,7 @@
     "start": "electron dist/main.js",
     "startVirtualPrinters": "ts-node printerTest.ts",
     "dev": "nodemon .",
-    "build": "tsc --skipLibCheck && copyfiles index.html dist",
+    "build": "tsc",
     "makeCert": "cd ./ && for /f \"tokens=3 delims=: \" %i  in ('netsh interface ip show config name^=\"Ethernet\" ^| findstr \"IP Address\"') do mkcert localhost 127.0.0.1 ::1 0.0.0.0 %i",
     "makeExe": "rm -rf ./dist && rm -rf ./exe && yarn build && pkg ."
   },
@@ -63,9 +63,11 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/decompress": "^4.2.4",
+    "@types/electron": "^1.6.12",
     "@types/ipp": "^2.0.5",
     "@types/ipp-printer": "^1.0.0",
     "@types/multer": "^1.4.11",
+    "@types/node": "^22.8.4",
     "@types/node-cron": "^3.0.8",
     "@types/swagger-ui-express": "^4.1.3",
     "concurrently": "^7.6.0",

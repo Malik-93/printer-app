@@ -1,5 +1,5 @@
 {
-    "exec": "tsc --skipLibCheck && copyfiles index.html dist && electron dist/main.js",
+    "exec": "tsc && electron dist/main.js",
     "watch": [
         "./"
     ],
