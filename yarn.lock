@@ -4198,6 +4198,11 @@ node-api-version@^0.2.0:
   dependencies:
     semver "^7.3.5"
 
+node-dns-sd@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/node-dns-sd/-/node-dns-sd-1.0.1.tgz#e5aa37aa7f21fe9381f3d756ddc53a8bb25a79ca"
+  integrity sha512-GCL6FgvkHoDnvJ1Yamf8mY16lYymWmYxjne4q1MC9C8sTZn9XR3BbwsrBQGikMESMFDFLC5MovNZn6wFl1yrdQ==
+
 node-fetch@^2.6.7:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
