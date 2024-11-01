@@ -32,13 +32,11 @@ console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
 
-const set_title_btn = document.getElementById("set_title");
-set_title_btn.addEventListener("click", () => {
-  window.gmd_api.setTitle("Hello from renderer process!");
-});
+// const set_title_btn = document.getElementById("set_title");
+// set_title_btn.addEventListener("click", () => {
+//   window.gmd_api.setTitle("Hello from renderer process!");
+// });
 
-window.gmd_api.onPrinters(
-  (event: Electron.IpcRendererEvent, printers: string[]) => {
-    console.log("Printers:", printers);
-  }
-);
+window.gmd_api.onPrinters((printers: string[]) => {
+  console.log("Printers:", printers);
+});
