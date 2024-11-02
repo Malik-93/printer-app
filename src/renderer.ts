@@ -37,6 +37,47 @@ console.log(
 //   window.gmd_api.setTitle("Hello from renderer process!");
 // });
 
-window.gmd_api.onPrinters((printers: string[]) => {
+window.gmd_api.onPrinters((printers: Electron.PrinterInfo[]) => {
   console.log("Printers:", printers);
+  const printers_container = document.getElementById("printers_container");
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const tbody = document.createElement("tbody");
+  const header_row = document.createElement("tr");
+  const headers = [
+    "Name",
+    "Description",
+    "Status",
+    "Device URI",
+    "Device URI Supported",
+  ];
+  headers.forEach((header) => {
+    const th = document.createElement("th");
+    th.textContent = header;
+    header_row.appendChild(th);
+  });
+  thead.appendChild(header_row);
+  table.appendChild(thead);
+
+  printers.forEach((printer) => {
+    const row = document.createElement("tr");
+    const columns = [
+      printer.name,
+      printer.description,
+      printer.status,
+      // @ts-ignore
+      printer?.options?.["device-uri"],
+      // @ts-ignore
+      printer?.options?.["printer-uri-supported"],
+    ];
+    columns.forEach((column) => {
+      const td = document.createElement("td");
+      td.textContent = column.toString();
+      row.appendChild(td);
+    });
+    tbody.appendChild(row);
+    table.appendChild(tbody);
+  });
+
+  printers_container.appendChild(table);
 });

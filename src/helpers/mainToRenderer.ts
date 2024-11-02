@@ -1,6 +1,15 @@
 import { BrowserWindow, Menu, app } from "electron";
+export default async (mainWindow: BrowserWindow) => {
+  const getPrintersAsync = async (): Promise<void> => {
+    const printers = await mainWindow.webContents.getPrintersAsync();
+    mainWindow.webContents.send("on-printers", printers);
+  };
 
-export default (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.on(
+    "did-finish-load",
+    async () => await getPrintersAsync()
+  );
+
   const defaultMenu = Menu.getApplicationMenu().items;
   const menu = Menu.buildFromTemplate([
     ...defaultMenu,
@@ -8,10 +17,7 @@ export default (mainWindow: BrowserWindow) => {
       label: app.name,
       submenu: [
         {
-          click: () => {
-            const printers = ["Printer1", "Printer2", "Printer3"]; // Replace with your actual printers data
-            mainWindow.webContents.send("on-printers", printers);
-          },
+          click: async () => await getPrintersAsync(),
           label: "Get Printers",
         },
       ],
