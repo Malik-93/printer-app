@@ -45,6 +45,10 @@ window.gmd_api.onPrinters((printers: Electron.PrinterInfo[]) => {
   const thead = document.createElement("thead");
   const tbody = document.createElement("tbody");
   const header_row = document.createElement("tr");
+  header_row.className = "hover:bg-gray-50";
+  table.className = "min-w-full border border-gray-300 divide-y divide-gray-200";
+  thead.className = "bg-gray-100";
+  tbody.className = "bg-white divide-y divide-gray-200"
   const headers = [
     "Name",
     "Description",
@@ -55,6 +59,8 @@ window.gmd_api.onPrinters((printers: Electron.PrinterInfo[]) => {
   headers.forEach((header) => {
     const th = document.createElement("th");
     th.textContent = header;
+    th.scope = "col";
+    th.className = "px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
     header_row.appendChild(th);
   });
   thead.appendChild(header_row);
@@ -74,6 +80,7 @@ window.gmd_api.onPrinters((printers: Electron.PrinterInfo[]) => {
     columns.forEach((column) => {
       const td = document.createElement("td");
       td.textContent = column.toString();
+      td.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
       row.appendChild(td);
     });
     tbody.appendChild(row);
