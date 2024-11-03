@@ -6,6 +6,7 @@ declare global {
       onPrinters: (
         callback: (printers: Electron.PrinterInfo[]) => void
       ) => void;
+      print: (printer_name: string) => void;
     };
   }
 }

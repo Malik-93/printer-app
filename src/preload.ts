@@ -5,4 +5,5 @@ contextBridge.exposeInMainWorld("gmd_api", {
   setTitle: (title: string) => ipcRenderer.send("set-title", title),
   onPrinters: (callback: (printers: Electron.PrinterInfo[]) => void) =>
     ipcRenderer.on("on-printers", (event, printers) => callback(printers)),
+  print: (printer_name: string) => ipcRenderer.send("print", printer_name),
 });
