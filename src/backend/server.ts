@@ -25,14 +25,10 @@ export default class LocalServer {
   }
 
   start(port: number) {
-    const http_server = http.createServer(this.app);
-    http_server.listen(port, "localhost", async () => {
+    this.app.listen(port, "localhost", async () => {
       try {
         const server_url = `http://localhost:${port}`;
-        const ngrok_url =
-          !isDev && process.platform === "darwin"
-            ? ""
-            : ((await Ngrok.init()) as string);
+        const ngrok_url = (await Ngrok.init()) as string;
         const ngrok_version = await Ngrok.getVersion();
         console.log(
           `\x1b[35m Printer app is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m 1.2.0 \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
