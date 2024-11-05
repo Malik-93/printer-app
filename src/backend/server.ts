@@ -86,7 +86,7 @@ export default class LocalServer {
     }
   }
 
-  start(port: number) {
+  public start(port: number) {
     this.app.listen(port, "localhost", async () => {
       try {
         const server_url = `http://localhost:${port}`;

@@ -35,10 +35,10 @@ console.log(
 
 // const set_title_btn = document.getElementById("set_title");
 // set_title_btn.addEventListener("click", () => {
-//   window.gmd_api.setTitle("Hello from renderer process!");
+//   window.ipc.setTitle("Hello from renderer process!");
 // });
 
-window.gmd_api.onPrinters((printers: Electron.PrinterInfo[]) => {
+window.ipc.onPrinters((printers: Electron.PrinterInfo[]) => {
   console.log("Printers:", printers);
   const printers_container = document.getElementById("printers_container");
   const table = document.createElement("table");
@@ -88,7 +88,7 @@ window.gmd_api.onPrinters((printers: Electron.PrinterInfo[]) => {
         button.textContent = "Print";
         button.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-500";
         button.addEventListener("click", () => {
-          window.gmd_api.print(printer.name);
+          window.ipc.print(printer.name);
         });
         td.appendChild(button);
         row.appendChild(td);

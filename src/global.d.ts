@@ -1,7 +1,7 @@
 export {};
 declare global {
   interface Window {
-    gmd_api: {
+    ipc: {
       setTitle: (title: string) => void;
       onPrinters: (
         callback: (printers: Electron.PrinterInfo[]) => void
