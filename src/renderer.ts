@@ -28,7 +28,7 @@
 
 import "./index.css";
 import "./styles/output.css";
-
+const logs = new Set();
 console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
@@ -90,4 +90,17 @@ window.ipc.onPrinters((printers: Electron.PrinterInfo[]) => {
   });
 
   printers_container.appendChild(table);
+});
+
+window.ipc.onLogMessage((logMsg: string) => {
+  logs.add(logMsg);
+  const logContainer = document.getElementById("logContainer");
+  const ul = document.getElementById("logs_list");
+  Array.from(logs).forEach((log: string) => {
+    const li = document.createElement("li");
+    li.className = "m-3";
+    li.textContent = log;
+    ul.appendChild(li);
+  });
+  logContainer.appendChild(ul);
 });

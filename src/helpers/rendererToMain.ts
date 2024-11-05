@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain } from "electron";
-
+const logMessages = new Set();
 export default () => {
   ipcMain.on("set-title", (event, title) => {
     const webContents = event.sender;

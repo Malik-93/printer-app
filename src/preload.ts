@@ -3,9 +3,15 @@
 import { contextBridge, ipcRenderer } from "electron/renderer";
 contextBridge.exposeInMainWorld("ipc", {
   setTitle: (title: string) => ipcRenderer.send("set-title", title),
+
   onPrinters: (callback: (printers: Electron.PrinterInfo[]) => void) =>
     ipcRenderer.on("on-printers", (event, printers) => callback(printers)),
+
   print: (printer_name: string) => ipcRenderer.send("print", printer_name),
-  printProgress: (progress: string) =>
-    ipcRenderer.send("print-progress", progress),
+
+  onLogMessage: (callback: (message: string) => void) =>
+    ipcRenderer.on("log-message", (event, message) => {
+      console.log("[preload].logMessage ran...");
+      callback(message);
+    })
 });

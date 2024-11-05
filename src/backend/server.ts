@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import { name } from "../../package.json";
+import { name, version } from "../../package.json";
 import PrinterRouter from "./router/printer.routes";
 import PrinterController from "./controllers/printer.controller";
 import path from "path";
@@ -10,11 +10,13 @@ import Ngrok from "./ngrok/Ngrok";
 import logger from "./logger";
 import { config } from "./config";
 import axios from "axios";
+import { BrowserWindow } from "electron";
 export default class LocalServer {
   private app: Express;
   private printerRouter;
   private printerController;
   private ADD_SERVER_HTTP;
+  private mainWindow: BrowserWindow;
 
   constructor() {
     process.stdin.resume();
@@ -62,6 +64,10 @@ export default class LocalServer {
 
       console.log(`Current email: ${storeEmail} \n`);
       console.log(`\x1b[33m Saving ngrok url into database... \x1b[0m \n`);
+      this.mainWindow.webContents.send(
+        "log-message",
+        "Saving ngrok url into database..."
+      );
 
       const response = await axios.post(
         `${this.ADD_SERVER_HTTP}`,
@@ -86,9 +92,10 @@ export default class LocalServer {
     }
   }
 
-  public start(port: number) {
+  public start(port: number, mainWindow: BrowserWindow) {
     this.app.listen(port, "localhost", async () => {
       try {
+        this.mainWindow = mainWindow;
         const server_url = `http://localhost:${port}`;
         const ngrok_url =
           !isDev && process.platform === "darwin"
@@ -96,11 +103,24 @@ export default class LocalServer {
             : ((await Ngrok.init()) as string);
 
         const ngrok_version = await Ngrok.getVersion();
+
         console.log(
-          `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m 1.2.0 \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
+          `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
         );
         logger.info(
-          `${name} is up and running on \n url: ${server_url}, environment: ${config.env}, rootDirectory: ${root_dir}`
+          `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
+        );
+        this.mainWindow.webContents.send(
+          "log-message",
+          `${name} is up and running...`
+        );
+        this.mainWindow.webContents.send(
+          "log-message",
+          `NgrokUrl: ${ngrok_url}`
+        );
+        this.mainWindow.webContents.send(
+          "log-message",
+          `Version: ${version}`
         );
         if (ngrok_url) {
           _globals.ngrok_url = ngrok_url;
@@ -111,5 +131,8 @@ export default class LocalServer {
         console.log(`\x1b[31m Server couldn't start ${error}\x1b[0m`);
       }
     });
+  }
+  public getExpressMainWindow(): BrowserWindow {
+    return this.mainWindow;
   }
 }
