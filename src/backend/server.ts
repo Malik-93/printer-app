@@ -6,7 +6,7 @@ import PrinterController from "./controllers/printer.controller";
 import path from "path";
 import errorHandler from "./middlewares/error.handler";
 import { _globals, isDev, root_dir } from "./constants";
-import Ngrok from "./ngrok/Ngrok";
+// import Ngrok from "./ngrok/Ngrok";
 import logger from "./logger";
 import { config } from "./config";
 import axios from "axios";
@@ -21,7 +21,7 @@ export default class LocalServer {
   constructor() {
     process.stdin.resume();
     process.on("SIGINT", async () => {
-      await Ngrok.kill();
+      // await Ngrok.kill();
       process.exit();
     });
 
@@ -99,10 +99,11 @@ export default class LocalServer {
         const server_url = `http://localhost:${port}`;
         const ngrok_url =
           !isDev && process.platform === "darwin"
-            ? ""
-            : ((await Ngrok.init()) as string);
+            ? "https://f9f2-154-198-84-241.ngrok-free.app"
+            : "https://f9f2-154-198-84-241.ngrok-free.app"
 
-        const ngrok_version = await Ngrok.getVersion();
+        // const ngrok_version = await Ngrok.getVersion();
+        const ngrok_version = "3.0";
 
         console.log(
           `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
