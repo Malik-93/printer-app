@@ -6,7 +6,9 @@
   "main": ".webpack/main",
   "scripts": {
     "build:css": "npx tailwindcss -i ./src/styles/tailwind.css -o ./src/styles/output.css",
-    "start": "concurrently \"yarn build:css\" \"electron-forge start\"",
+    "build:css:watch": "npx tailwindcss -i ./src/styles/tailwind.css -o ./src/styles/output.css --watch",
+    "dev": "concurrently \"yarn build:css:watch\" \"electron-forge start\"",
+    "start": "concurrently \"electron-forge start\" \"yarn build:css\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",

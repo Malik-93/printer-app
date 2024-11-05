@@ -56,7 +56,6 @@ window.ipc.onPrinters((printers: Electron.PrinterInfo[]) => {
     "Status",
     "Device URI",
     "Device URI Supported",
-    "Actions",
   ];
   headers.forEach((header) => {
     const th = document.createElement("th");
@@ -72,28 +71,16 @@ window.ipc.onPrinters((printers: Electron.PrinterInfo[]) => {
   printers.forEach((printer) => {
     const row = document.createElement("tr");
     const columns = [
-      printer.name,
+      printer.displayName,
       printer.description,
       printer.status,
       // @ts-ignore
       printer?.options?.["device-uri"],
       // @ts-ignore
       printer?.options?.["printer-uri-supported"],
-      "Print",
     ];
     columns.forEach((column) => {
       const td = document.createElement("td");
-      if (column === "Print") {
-        const button = document.createElement("button");
-        button.textContent = "Print";
-        button.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-500";
-        button.addEventListener("click", () => {
-          window.ipc.print(printer.name);
-        });
-        td.appendChild(button);
-        row.appendChild(td);
-        return;
-      }
       td.textContent = column.toString();
       td.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-500";
       row.appendChild(td);
