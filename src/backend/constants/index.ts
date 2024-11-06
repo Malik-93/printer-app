@@ -1,6 +1,6 @@
 import path from "path";
 import { config } from "../config";
-export const port: number = parseInt(config.port || "0") || 9000;
+export const port: number = parseInt(config.port || "0") || 8080;
 export const isDev = config.env === "development";
 export let _globals = {
   store_email: "",

@@ -21,7 +21,7 @@ export default class LocalServer {
   constructor() {
     process.stdin.resume();
     process.on("SIGINT", async () => {
-      await Ngrok.kill();
+      Ngrok.kill();
       process.exit();
     });
 
@@ -96,11 +96,10 @@ export default class LocalServer {
     this.app.listen(port, "localhost", async () => {
       try {
         this.mainWindow = mainWindow;
+
         const server_url = `http://localhost:${port}`;
-        const ngrok_url =
-          !isDev && process.platform === "darwin"
-            ? ""
-            : ((await Ngrok.init()) as string);
+
+        const ngrok_url = await Ngrok.init();
 
         const ngrok_version = await Ngrok.getVersion();
 
@@ -118,10 +117,9 @@ export default class LocalServer {
           "log-message",
           `NgrokUrl: ${ngrok_url}`
         );
-        this.mainWindow.webContents.send(
-          "log-message",
-          `Version: ${version}`
-        );
+        this.mainWindow.webContents.send("log-message", `Ngrok version: ${ngrok_version}`);
+        
+        this.mainWindow.webContents.send("log-message", `App version: ${version}`);
         if (ngrok_url) {
           _globals.ngrok_url = ngrok_url;
           await this.sendNgrokUrl(ngrok_url);

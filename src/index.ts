@@ -26,7 +26,7 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainToRenderer(mainWindow);
-  server.start(parseInt(process.env.PRT) || 9000, mainWindow);
+  server.start(parseInt(process.env.PRT) || 8080, mainWindow);
 
   // Open the DevTools.
   if (process.env.NODE_ENV === "development")
