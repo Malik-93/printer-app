@@ -14,7 +14,7 @@ class WinstonLogger {
     // Set up log directory path
     this.logDirectory = path.join(
       process.env.NODE_ENV === "development"
-        ? __dirname
+        ? __dirname // In development, use the .webpack/main directory
         : app.getPath("userData"),
       "logs",
       "printer-app"

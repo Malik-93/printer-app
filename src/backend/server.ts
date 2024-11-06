@@ -21,7 +21,7 @@ export default class LocalServer {
 
   constructor() {
     process.stdin.resume();
-    process.on("SIGINT", async () => {
+    process.on("SIGINT", () => {
       Ngrok.kill();
       process.exit();
     });
