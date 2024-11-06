@@ -13,5 +13,11 @@ contextBridge.exposeInMainWorld("ipc", {
     ipcRenderer.on("log-message", (event, message) => {
       console.log("[preload].logMessage ran...");
       callback(message);
-    })
+    }),
+  onNgrokUrl: (callback: (ngrokUrl: string) => void) => {
+    ipcRenderer.on("ngrok-url", (event, ngrokUrl) => {
+      console.log("[preload].onNgrokUrl ran...");
+      callback(ngrokUrl);
+    });
+  },
 });

@@ -28,7 +28,6 @@
 
 import "./index.css";
 import "./styles/output.css";
-let logs = new Set();
 console.log(
   '👋 This message is being logged by "renderer.js", included via webpack'
 );
@@ -104,4 +103,12 @@ window.ipc.onLogMessage((logMsg: string) => {
   li.textContent = `${hours}:${minutes}:${seconds} - ${logMsg}`;
   ul.appendChild(li);
   logContainer.appendChild(ul);
+});
+
+window.ipc.onNgrokUrl((url: string) => {
+  const ngrokAncher = document.getElementById("ngrok_url") as HTMLAnchorElement;
+  ngrokAncher.textContent = url;
+  ngrokAncher.href = url;
+  ngrokAncher.target = "_blank";
+  ngrokAncher.style.color = "blue";
 });

@@ -109,21 +109,15 @@ export default class LocalServer {
         console.log(
           `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
         );
-        this.logger.info(
-          `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
-        );
-        // this.mainWindow.webContents.send(
-        //   "log-message",
-        //   `${name} is up and running...`
-        // );
-        // this.mainWindow.webContents.send(
-        //   "log-message",
-        //   `NgrokUrl: ${ngrok_url}`
-        // );
 
-        // this.mainWindow.webContents.send("log-message", `Ngrok version: ${ngrok_version}`);
+        this.logger.info(`${name} is up and running...`);
+        this.logger.info(`Environment: ${config.env}`);
+        this.logger.info(`App Version: ${version}`);
+        this.logger.info(`Ngrok Version: ${ngrok_version}`);
+        this.logger.info(`NgrokUrl: ${ngrok_url}`);
+        this.logger.info(`LocalUrl: ${server_url}`);
 
-        // this.mainWindow.webContents.send("log-message", `App version: ${version}`);
+        this.mainWindow.webContents.send("ngrok-url", ngrok_url);
 
         if (ngrok_url) {
           _globals.ngrok_url = ngrok_url;
