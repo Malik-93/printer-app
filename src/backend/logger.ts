@@ -13,7 +13,9 @@ class WinstonLogger {
   constructor(mainWindow?: BrowserWindow) {
     // Set up log directory path
     this.logDirectory = path.join(
-      app.getPath("userData"),
+      process.env.NODE_ENV === "development"
+        ? __dirname
+        : app.getPath("userData"),
       "logs",
       "printer-app"
     );
