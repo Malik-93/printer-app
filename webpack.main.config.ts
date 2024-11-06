@@ -1,7 +1,9 @@
-import type { Configuration } from "webpack";
+import webpack, { type Configuration } from "webpack";
 
 import { rules } from "./webpack.rules";
 import { plugins } from "./webpack.plugins";
+import path from "path";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 export const mainConfig: Configuration = {
   /**
    * This is the main entry point for your application, it's the first file
@@ -12,11 +14,33 @@ export const mainConfig: Configuration = {
   module: {
     rules,
   },
-  plugins,
+  plugins: [
+    ...plugins,
+    new webpack.NormalModuleReplacementPlugin(
+      /ngrok\/src\/constants\.js/,
+      path.resolve(__dirname, "ngrok-constants-patch.js")
+    ),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "node_modules/ngrok/bin/ngrok",
+          to: "bin",
+          toType: "dir",
+          transform(content, path) {
+            // Ensure permissions are maintained
+            return content;
+          },
+          info: {
+            minimized: true,
+          },
+        },
+      ],
+    }),
+  ],
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".json"],
   },
-  externals: {
-    ngrok: "commonjs ngrok", // Exclude ngrok from bundling
-  },
+  // externals: {
+  //   ngrok: "commonjs ngrok", // Exclude ngrok from bundling
+  // },
 };
