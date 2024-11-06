@@ -1,6 +1,6 @@
 import winston, { LogEntry, Logger } from "winston";
 import { config } from "./config";
-import { BrowserWindow } from "electron";
+import { BrowserWindow, app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -12,7 +12,11 @@ class WinstonLogger {
 
   constructor(mainWindow?: BrowserWindow) {
     // Set up log directory path
-    this.logDirectory = path.join(__dirname, "logs/printer-app");
+    this.logDirectory = path.join(
+      app.getPath("userData"),
+      "logs",
+      "printer-app"
+    );
     this.ensureLogDirectoryExists();
 
     // Initialize the logger
