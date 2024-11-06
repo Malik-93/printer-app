@@ -2,10 +2,7 @@ import { port } from "../constants";
 import Logger from "../logger";
 import path from "path";
 import fs from "fs";
-import {
-  ChildProcessWithoutNullStreams,
-  spawn,
-} from "child_process";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { app } from "electron";
 const logger = new Logger();
 class Ngrok {
@@ -15,13 +12,7 @@ class Ngrok {
     try {
       logger.info(`[ngrok] -> Initializing tunnel...`);
       console.log(`\x1b[33m [ngrok] -> Initializing tunnel... \x1b[0m \n`);
-      this.binaryPath = path.join(
-        process.env.NODE_ENV === "development"
-          ? __dirname
-          : app.getPath("userData"),
-        "bin",
-        "ngrok"
-      );
+      this.binaryPath = path.join(app.getPath("userData"), "bin", "ngrok");
 
       // Check if the binary exists
       if (!fs.existsSync(this.binaryPath)) {
@@ -37,17 +28,6 @@ class Ngrok {
         );
         logger.info(`[ngrok] -> Ngrok binary found at: ${this.binaryPath}`);
       }
-
-      // Ensure the ngrok binary is executable
-      fs.chmodSync(`${this.binaryPath}`, 0o755);
-
-      console.log(
-        `\x1b[33m Set executable permissions for ${this.binaryPath} \x1b[0m \n`
-      );
-
-      logger.info(
-        `[ngrok] -> Set executable permissions for ${this.binaryPath}`
-      );
 
       return new Promise((resolve, reject) => {
         // Spawn ngrok to start an HTTP tunnel on port 8080
@@ -141,7 +121,9 @@ class Ngrok {
       });
     } catch (error) {
       console.log(`[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`);
-      logger.error(`[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`);
+      logger.error(
+        `[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`
+      );
     }
   }
 }
