@@ -1,5 +1,5 @@
 import { port } from "../constants";
-import logger from "../logger";
+import Logger from "../logger";
 import path from "path";
 import fs from "fs";
 import {
@@ -7,6 +7,7 @@ import {
   spawn,
   spawnSync,
 } from "child_process";
+const logger = new Logger();
 class Ngrok {
   private process: ChildProcessWithoutNullStreams;
   private binaryPath: string;

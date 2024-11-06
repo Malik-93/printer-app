@@ -7,7 +7,7 @@ import path from "path";
 import errorHandler from "./middlewares/error.handler";
 import { _globals, isDev, root_dir } from "./constants";
 import Ngrok from "./ngrok/Ngrok";
-import logger from "./logger";
+import Logger from "./logger";
 import { config } from "./config";
 import axios from "axios";
 import { BrowserWindow } from "electron";
@@ -17,6 +17,7 @@ export default class LocalServer {
   private printerController;
   private ADD_SERVER_HTTP;
   private mainWindow: BrowserWindow;
+  private logger: Logger;
 
   constructor() {
     process.stdin.resume();
@@ -27,7 +28,7 @@ export default class LocalServer {
 
     process.on("uncaughtException", (error: Error) => {
       console.log("[uncaughtException]", error);
-      logger.info("[uncaughtException]", error);
+      this.logger.info("[uncaughtException]", error);
     });
 
     this.ADD_SERVER_HTTP = config.addServerHttp;
@@ -64,10 +65,10 @@ export default class LocalServer {
 
       console.log(`Current email: ${storeEmail} \n`);
       console.log(`\x1b[33m Saving ngrok url into database... \x1b[0m \n`);
-      this.mainWindow.webContents.send(
-        "log-message",
-        "Saving ngrok url into database..."
-      );
+      // this.mainWindow.webContents.send(
+      //   "log-message",
+      //   "Saving ngrok url into database..."
+      // );
 
       const response = await axios.post(
         `${this.ADD_SERVER_HTTP}`,
@@ -97,6 +98,8 @@ export default class LocalServer {
       try {
         this.mainWindow = mainWindow;
 
+        this.logger = new Logger(this.mainWindow);
+
         const server_url = `http://localhost:${port}`;
 
         const ngrok_url = await Ngrok.init();
@@ -106,20 +109,22 @@ export default class LocalServer {
         console.log(
           `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
         );
-        logger.info(
+        this.logger.info(
           `\x1b[35m ${name} is up and running... \x1b[0m \n\n \x1b[34mLocalUrl:\x1b[0m ${server_url} \n\n \x1b[35mNgrokUrl:\x1b[0m ${ngrok_url} \n\n \x1b[32mEnvironment:\x1b[0m ${config.env} \n\n \x1b[35mRootDirectory:\x1b[0m ${root_dir} \n\n \x1b[32mApp Version:\x1b[0m ${version} \n\n \x1b[32mNgrok Version:\x1b[0m ${ngrok_version} \n\n`
         );
-        this.mainWindow.webContents.send(
-          "log-message",
-          `${name} is up and running...`
-        );
-        this.mainWindow.webContents.send(
-          "log-message",
-          `NgrokUrl: ${ngrok_url}`
-        );
-        this.mainWindow.webContents.send("log-message", `Ngrok version: ${ngrok_version}`);
-        
-        this.mainWindow.webContents.send("log-message", `App version: ${version}`);
+        // this.mainWindow.webContents.send(
+        //   "log-message",
+        //   `${name} is up and running...`
+        // );
+        // this.mainWindow.webContents.send(
+        //   "log-message",
+        //   `NgrokUrl: ${ngrok_url}`
+        // );
+
+        // this.mainWindow.webContents.send("log-message", `Ngrok version: ${ngrok_version}`);
+
+        // this.mainWindow.webContents.send("log-message", `App version: ${version}`);
+
         if (ngrok_url) {
           _globals.ngrok_url = ngrok_url;
           await this.sendNgrokUrl(ngrok_url);
