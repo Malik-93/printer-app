@@ -49,12 +49,12 @@ export default class LocalServer {
   }
 
   private setupRoutes() {
-    this.app.get("/", (_req: Request, _res: Response) => {
+    this.app.use("/api", (_req: Request, _res: Response) => {
       return _res
         .status(200)
         .json({ active: true, message: "Printer app is up and running..." });
     });
-    this.app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+    this.app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
     this.app.use("/api/printer", this.printerRouter);
   }
 

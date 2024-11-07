@@ -30,7 +30,7 @@ class Ngrok {
       }
 
       return new Promise((resolve, reject) => {
-        // Spawn ngrok to start an HTTP tunnel on port 8080
+        // Spawn ngrok to start an HTTP tunnel on port 9000
         this.process = spawn(this.binaryPath, [
           "http",
           `${port}`,
