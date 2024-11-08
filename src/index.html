@@ -6,7 +6,9 @@
   </head>
   <body class="p-10">
     <div class="w-full h-full p-4 bg-white" id="printer_app_container">
-      <div class="flex flex-row justify-between items-center flex-wrap gap-4 mb-4">
+      <div
+        class="flex flex-row justify-between items-center flex-wrap gap-4 mb-4"
+      >
         <!-- Search Input with Icon -->
         <div class="relative w-full md:w-1/4">
           <input
@@ -34,27 +36,28 @@
             </svg>
           </button>
         </div>
-    
+
         <!-- Store Email Display -->
         <div class="flex flex-row items-center space-x-1">
           <b>storeEmail:</b>
-          <p>loop@gmdstoresinc.com</p>
+          <p id="storeEmail"></p>
         </div>
-    
+
         <!-- URL Display -->
         <div class="flex flex-row items-center space-x-1">
           <b>URL:</b>
           <a id="ngrok_url" class="text-blue-600 hover:underline"></a>
         </div>
-    
+
         <!-- Reload Button -->
         <button
           class="flex items-center px-4 py-2 bg-[#21688B] text-white font-semibold rounded-md shadow hover:bg-[#21688B] focus:outline-none focus:ring-2 focus:ring-[#21688B] focus:ring-opacity-75"
+          id="reload_app_btn"
         >
           Reload
         </button>
       </div>
-    
+
       <!-- Printers Table Section -->
       <div class="w-full bg-gray-50 rounded-lg shadow mb-6">
         <p class="py-2 font-bold text-xl px-5 my-3 bg-gray-100">
@@ -62,17 +65,19 @@
         </p>
         <div id="printers_container" class="overflow-x-auto"></div>
       </div>
-    
+
       <!-- Logs Section -->
       <div class="w-full bg-gray-50 rounded-lg shadow">
         <p class="py-2 font-bold text-xl px-5 my-3 bg-gray-100">
           Printer app logs
         </p>
-        <div class="flex h-96 border border-gray-300 my-3 rounded-md overflow-auto" id="logContainer">
+        <div
+          class="flex h-96 border border-gray-300 my-3 rounded-md overflow-auto"
+          id="logContainer"
+        >
           <ul id="logs_list" class="p-5 space-y-2 text-gray-700"></ul>
         </div>
       </div>
     </div>
-    
   </body>
 </html>

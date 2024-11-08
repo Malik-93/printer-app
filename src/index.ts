@@ -18,6 +18,16 @@ let setupWindow: BrowserWindow | null = null;
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
+const startServer = (mainWindow: BrowserWindow) => {
+  console.log("Server Starting");
+  server.start(parseInt(process.env.PRT) || 9000, mainWindow);
+  console.log("Server Started");
+};
+const stopLocalServer = () => {
+  console.log("Server Stoping");
+  server.close();
+  console.log("Server Stopped");
+};
 const copyNgrokBin = async () => {
   const sourcePath = path.join(__dirname, "bin/ngrok");
   const destinationPath = path.join(appResources, "bin/ngrok");
@@ -38,8 +48,9 @@ const createMainWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainToRenderer(mainWindow);
-  server.start(parseInt(process.env.PRT) || 9000, mainWindow);
 
+  mainWindow.webContents.on("did-start-loading", stopLocalServer);
+  mainWindow.webContents.on("did-stop-loading", () => startServer(mainWindow));
   // Open the DevTools.
   if (process.env.NODE_ENV === "development")
     mainWindow.webContents.openDevTools();
@@ -98,27 +109,8 @@ app.on("activate", () => {
     createMainWindow();
   }
 });
-// Handle saving env variables from the renderer process
-// ipcMain.handle("save-env-variables", async (event, data) => {
-//   try {
-//     const { apiUrl, secretKey } = data;
 
-//     // Prepare the .env content
-//     const envContent = `API_URL=${apiUrl}\nMY_SECRET_KEY=${secretKey}\n`;
+app.on("will-continue-activity", (event) => console.log("continue activity"));
 
-//     // Write to the .env file
-//     await fs.writeFile(path.join(appResources, ".env"), envContent);
-
-//     console.log("Env variables saved successfully.");
-
-//     // Close the input window after saving
-//     if (setupWindow) {
-//       setupWindow.close();
-//     }
-//     app.relaunch();
-//   } catch (err) {
-//     console.error("Error saving env variables:", err);
-//   }
-// });
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

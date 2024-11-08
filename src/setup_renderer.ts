@@ -10,9 +10,9 @@ const form = document.getElementById('setup-form') as HTMLFormElement;
 form?.addEventListener('submit', (event) => {
   event.preventDefault();
   
-  const apiUrl = (document.getElementById('storeEmail') as HTMLInputElement).value;
-  const secretKey = (document.getElementById('secretKey') as HTMLInputElement).value;
+  const STORE_EMAIL = (document.getElementById('storeEmail') as HTMLInputElement).value;
+  const ADD_SERVER_HTTP = (document.getElementById('addServerHttp') as HTMLInputElement).value;
 
   // Send the data to the main process
-  window.ipc.saveEnvVariables({ apiUrl, secretKey });
+  window.ipc.saveEnvVariables({ STORE_EMAIL, ADD_SERVER_HTTP });
 });

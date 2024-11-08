@@ -10,6 +10,10 @@ declare global {
       onLogMessage: (callback: (logs: string) => void) => void;
       onNgrokUrl: (callback: (url: string) => void) => void;
       saveEnvVariables: (data: { [key: string]: string }) => void;
+      showSystemValues: (
+        callback: (sysVals: { [key: string]: string }) => void
+      ) => void;
+      reloadApp: () => void;
     };
   }
 }

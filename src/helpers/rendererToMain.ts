@@ -35,4 +35,10 @@ export default () => {
       console.error("Error saving env variables:", err);
     }
   });
+
+  ipcMain.handle("app-reload", (event) => {
+    const webContents = event.sender;
+    const mainWindow = BrowserWindow.fromWebContents(webContents);
+    mainWindow.reload();
+  });
 };

@@ -113,3 +113,15 @@ window.ipc.onNgrokUrl((url: string) => {
   ngrokAncher.style.color = "blue";
 });
 
+window.ipc.showSystemValues((sysVals: { [key: string]: string }) => {
+  console.log("sysVals", sysVals);
+  if (sysVals) {
+    const storeEmail = document.getElementById("storeEmail");
+    storeEmail.textContent = sysVals.STORE_EMAIL;
+  }
+});
+
+const reload_app_btn = document.getElementById("reload_app_btn");
+reload_app_btn.addEventListener("click", () => {
+  window.ipc.reloadApp();
+});

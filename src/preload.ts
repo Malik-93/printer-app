@@ -23,4 +23,9 @@ contextBridge.exposeInMainWorld("ipc", {
   saveEnvVariables: (data: { [key: string]: string }) => {
     ipcRenderer.invoke("save-env-variables", data);
   },
+  showSystemValues: (callback: (sysVals: { [key: string]: string }) => void) =>
+    ipcRenderer.on("show-system-values", (event, sysVals) => callback(sysVals)),
+  reloadApp: () => {
+    ipcRenderer.invoke("app-reload");
+  },
 });

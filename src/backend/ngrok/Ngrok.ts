@@ -77,22 +77,24 @@ class Ngrok {
           logger.error(`Failed to start ngrok process: ${err}`);
           reject(err);
         });
+
+        this.process.on("exit", (code) => {
+          console.log(`ngrok process exited with code ${code}`);
+          logger.info(`ngrok process exited with code ${code}`);
+          this.process.kill("SIGTERM");
+        });
       });
     } catch (error: any) {
       logger.error(`[ngrok].error -> ${error}`);
       console.log(`\x1b[31m [ngrok].error -> ${error} \x1b[0m \n`);
     }
   }
+
   public kill() {
     try {
       console.log("[ngrok] -> killing tunnel on app exit \n");
       logger.info("[ngrok] -> killing tunnel on app exit");
-
-      this.process.on("exit", (code) => {
-        console.log(`ngrok process exited with code ${code}`);
-        logger.info(`ngrok process exited with code ${code}`);
-        this.process.kill("SIGTERM");
-      });
+      this.process.kill("SIGTERM");
     } catch (error) {
       logger.error(`[ngrok].kill -> error: ${JSON.stringify(error)}`);
       console.log(`[ngrok].kill -> error: ${JSON.stringify(error)} \n`);

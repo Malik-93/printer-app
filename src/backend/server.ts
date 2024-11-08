@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, Application } from "express";
 import cors from "cors";
 import { name, version } from "../../package.json";
 import PrinterRouter from "./router/printer.routes";
@@ -11,8 +11,10 @@ import Logger from "./logger";
 import { config } from "./config";
 import axios from "axios";
 import { BrowserWindow } from "electron";
+import { Server } from "http";
 export default class LocalServer {
   private app: Express;
+  private server: Server;
   private printerRouter;
   private printerController;
   private ADD_SERVER_HTTP;
@@ -54,7 +56,10 @@ export default class LocalServer {
         .status(200)
         .json({ active: true, message: "Printer app is up and running..." });
     });
-    this.app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
+    this.app.use(
+      "/api/uploads",
+      express.static(path.join(__dirname, "uploads"))
+    );
     this.app.use("/api/printer", this.printerRouter);
   }
 
@@ -94,7 +99,7 @@ export default class LocalServer {
   }
 
   public start(port: number, mainWindow: BrowserWindow) {
-    this.app.listen(port, "localhost", async () => {
+    this.server = this.app.listen(port, "localhost", async () => {
       try {
         this.mainWindow = mainWindow;
 
@@ -128,6 +133,11 @@ export default class LocalServer {
         console.log(`\x1b[31m Server couldn't start ${error}\x1b[0m`);
       }
     });
+  }
+  public close() {
+    this.server.close();
+    Ngrok.kill();
+    console.log("Server Stopped");
   }
   public getExpressMainWindow(): BrowserWindow {
     return this.mainWindow;
