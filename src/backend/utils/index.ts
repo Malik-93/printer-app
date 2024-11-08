@@ -2,8 +2,8 @@ import { exec } from "child_process";
 import fs from "fs";
 import util from "util";
 import { IRolloResults } from "../interfaces/printerInterface";
-import Logger from "../logger";
-const logger = new Logger();
+import WinstonLogger from "../logger";
+const logger = new WinstonLogger();
 const _exec = util.promisify(exec);
 export const unlinkFile = (filePath: string) => {
   if (fs.existsSync(filePath)) {

@@ -1,10 +1,10 @@
 import express, { Request, Response, Router } from "express";
 import PrinterController from "../controllers/printer.controller";
-import Logger from "../logger";
+import WinstonLogger from "../logger";
 import upload from "../multer/upload";
 import { IFormPrintRequest } from "./../interfaces/printerInterface";
 import { unlinkFile } from "../utils";
-const logger = new Logger();
+const logger = new WinstonLogger();
 const router: Router = express.Router();
 
 export default class PrinterRouter {

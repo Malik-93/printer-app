@@ -7,7 +7,7 @@ import path from "path";
 import errorHandler from "./middlewares/error.handler";
 import { _globals, isDev, root_dir } from "./constants";
 import Ngrok from "./ngrok/Ngrok";
-import Logger from "./logger";
+import WinstonLogger from "./logger";
 import { config } from "./config";
 import axios from "axios";
 import { BrowserWindow } from "electron";
@@ -19,7 +19,7 @@ export default class LocalServer {
   private printerController;
   private ADD_SERVER_HTTP;
   private mainWindow: BrowserWindow;
-  private logger: Logger;
+  private logger: WinstonLogger;
 
   constructor() {
     process.stdin.resume();
@@ -100,7 +100,7 @@ export default class LocalServer {
       try {
         this.mainWindow = mainWindow;
 
-        this.logger = new Logger(this.mainWindow);
+        this.logger = new WinstonLogger(this.mainWindow);
 
         const server_url = `http://localhost:${port}`;
 

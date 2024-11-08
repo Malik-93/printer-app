@@ -1,16 +1,19 @@
 import { port } from "../constants";
-import Logger from "../logger";
+import WinstonLogger from "../logger";
 import path from "path";
 import fs from "fs";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { app } from "electron";
-const logger = new Logger();
 class Ngrok {
   private process: ChildProcessWithoutNullStreams;
   private binaryPath: string;
+  private logger: WinstonLogger;
+  constructor() {
+    this.logger = new WinstonLogger();
+  }
   public init(): Promise<string> {
     try {
-      logger.info(`[ngrok] -> Initializing tunnel...`);
+      this.logger.info(`[ngrok] -> Initializing tunnel...`);
       console.log(`\x1b[33m [ngrok] -> Initializing tunnel... \x1b[0m \n`);
       this.binaryPath = path.join(app.getPath("userData"), "bin", "ngrok");
 
@@ -20,13 +23,17 @@ class Ngrok {
           "\x1b[32m Ngrok binary not found at: \x1b[0m \n",
           this.binaryPath
         );
-        logger.info(`[ngrok] -> Ngrok binary not found at: ${this.binaryPath}`);
+        this.logger.info(
+          `[ngrok] -> Ngrok binary not found at: ${this.binaryPath}`
+        );
         return;
       } else {
         console.log(
           `\x1b[32m Ngrok binary found at: ${this.binaryPath} \x1b[0m \n`
         );
-        logger.info(`[ngrok] -> Ngrok binary found at: ${this.binaryPath}`);
+        this.logger.info(
+          `[ngrok] -> Ngrok binary found at: ${this.binaryPath}`
+        );
       }
 
       return new Promise((resolve, reject) => {
@@ -50,7 +57,7 @@ class Ngrok {
             const match = data.toString().match(/url=(https?:\/\/\S+)/);
             if (match) {
               const tunnel_url = match[1];
-              logger.info(
+              this.logger.info(
                 `[ngrok].connect -> tunnel started at: ${tunnel_url}`
               );
               console.log(
@@ -64,28 +71,28 @@ class Ngrok {
         this.process.stderr.on("data", (data) => {
           // Error output from ngrok process
           console.error(`stderr: ${data.toString()}`);
-          logger.error(`stderr: ${data.toString()}`);
+          this.logger.error(`stderr: ${data.toString()}`);
         });
 
         this.process.on("close", (code) => {
           console.log(`ngrok process exited with code ${code}`);
-          logger.info(`ngrok process exited with code ${code}`);
+          this.logger.info(`ngrok process exited with code ${code}`);
         });
         // Handle any errors related to spawning the process
         this.process.on("error", (err) => {
           console.error(`Failed to start ngrok process: ${err}`);
-          logger.error(`Failed to start ngrok process: ${err}`);
+          this.logger.error(`Failed to start ngrok process: ${err}`);
           reject(err);
         });
 
         this.process.on("exit", (code) => {
           console.log(`ngrok process exited with code ${code}`);
-          logger.info(`ngrok process exited with code ${code}`);
+          this.logger.info(`ngrok process exited with code ${code}`);
           this.process.kill("SIGTERM");
         });
       });
     } catch (error: any) {
-      logger.error(`[ngrok].error -> ${error}`);
+      this.logger.error(`[ngrok].error -> ${error}`);
       console.log(`\x1b[31m [ngrok].error -> ${error} \x1b[0m \n`);
     }
   }
@@ -93,10 +100,10 @@ class Ngrok {
   public kill() {
     try {
       console.log("[ngrok] -> killing tunnel on app exit \n");
-      logger.info("[ngrok] -> killing tunnel on app exit");
+      this.logger.info("[ngrok] -> killing tunnel on app exit");
       this.process.kill("SIGTERM");
     } catch (error) {
-      logger.error(`[ngrok].kill -> error: ${JSON.stringify(error)}`);
+      this.logger.error(`[ngrok].kill -> error: ${JSON.stringify(error)}`);
       console.log(`[ngrok].kill -> error: ${JSON.stringify(error)} \n`);
     }
   }
@@ -125,7 +132,7 @@ class Ngrok {
       });
     } catch (error) {
       console.log(`[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`);
-      logger.error(
+      this.logger.error(
         `[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`
       );
     }

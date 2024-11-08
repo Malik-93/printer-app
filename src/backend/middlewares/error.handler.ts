@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../models/Error";
-import Logger from "../logger";
-const logger = new Logger();
+import WinstonLogger from "../logger";
+const logger = new WinstonLogger();
 /**
  * Custom error handler to standardize error objects returned to
  * the client
