@@ -11,7 +11,7 @@ import Logger from "./logger";
 import { config } from "./config";
 import axios from "axios";
 import { BrowserWindow } from "electron";
-import { Server } from "http";
+import { Server, createServer } from "http";
 export default class LocalServer {
   private app: Express;
   private server: Server;
@@ -94,7 +94,9 @@ export default class LocalServer {
   }
 
   public start(port: number, mainWindow: BrowserWindow) {
-    this.server = this.app.listen(port, "localhost", async () => {
+    this.server = createServer(this.app);
+
+    this.server.listen(port, "localhost", async () => {
       try {
         this.mainWindow = mainWindow;
 
