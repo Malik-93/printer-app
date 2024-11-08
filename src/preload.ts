@@ -20,4 +20,7 @@ contextBridge.exposeInMainWorld("ipc", {
       callback(ngrokUrl);
     });
   },
+  saveEnvVariables: (data: { [key: string]: string }) => {
+    ipcRenderer.invoke("save-env-variables", data);
+  },
 });

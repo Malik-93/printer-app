@@ -9,6 +9,7 @@ declare global {
       print: (printer_name: string) => void;
       onLogMessage: (callback: (logs: string) => void) => void;
       onNgrokUrl: (callback: (url: string) => void) => void;
+      saveEnvVariables: (data: { [key: string]: string }) => void;
     };
   }
 }

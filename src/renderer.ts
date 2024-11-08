@@ -112,3 +112,4 @@ window.ipc.onNgrokUrl((url: string) => {
   ngrokAncher.target = "_blank";
   ngrokAncher.style.color = "blue";
 });
+
