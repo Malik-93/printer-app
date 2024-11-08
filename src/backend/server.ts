@@ -70,11 +70,6 @@ export default class LocalServer {
 
       console.log(`Current email: ${storeEmail} \n`);
       console.log(`\x1b[33m Saving ngrok url into database... \x1b[0m \n`);
-      // this.mainWindow.webContents.send(
-      //   "log-message",
-      //   "Saving ngrok url into database..."
-      // );
-
       const response = await axios.post(
         `${this.ADD_SERVER_HTTP}`,
         {

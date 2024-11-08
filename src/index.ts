@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import rendererToMain from "./helpers/rendererToMain";
-import mainToRenderer from "./helpers/mainToRenderer";
+import { app, BrowserWindow } from "electron";
+import ipcMains from "./ipcs/ipcMains";
+import ipcRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
 import path from "path";
 import fs from "fs-extra";
@@ -47,7 +47,7 @@ const createMainWindow = (): void => {
   });
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainToRenderer(mainWindow);
+  ipcRenderers(mainWindow);
 
   mainWindow.webContents.on("did-start-loading", stopLocalServer);
   mainWindow.webContents.on("did-stop-loading", () => startServer(mainWindow));
@@ -84,7 +84,7 @@ const createSetupWindow = (): void => {
 app.on("ready", async () => {
   try {
     await copyNgrokBin();
-    rendererToMain();
+    ipcMains();
     if (fs.existsSync(envFilePath)) {
       createMainWindow();
     } else createSetupWindow();
