@@ -12,6 +12,7 @@ import { config } from "./config";
 import axios from "axios";
 import { BrowserWindow } from "electron";
 import { Server, createServer } from "http";
+import MainApp from "../index";
 export default class LocalServer {
   private app: Express;
   private server: Server;
@@ -51,7 +52,7 @@ export default class LocalServer {
   }
 
   private setupRoutes() {
-    this.app.use("/api", (_req: Request, _res: Response) => {
+    this.app.get("/", (_req: Request, _res: Response) => {
       return _res
         .status(200)
         .json({ active: true, message: "Printer app is up and running..." });
@@ -93,14 +94,15 @@ export default class LocalServer {
     }
   }
 
-  public start(port: number, mainWindow: BrowserWindow) {
+  public start(port: number) {
     this.server = createServer(this.app);
 
     this.server.listen(port, "localhost", async () => {
       try {
-        this.mainWindow = mainWindow;
 
-        this.logger = new WinstonLogger(this.mainWindow);
+        this.mainWindow = MainApp?.getMainWindow()!;
+
+        this.logger = new WinstonLogger();
 
         const server_url = `http://localhost:${port}`;
 
@@ -119,7 +121,8 @@ export default class LocalServer {
         this.logger.info(`NgrokUrl: ${ngrok_url}`);
         this.logger.info(`LocalUrl: ${server_url}`);
 
-        this.mainWindow.webContents.send("ngrok-url", ngrok_url);
+        if (this.mainWindow)
+          this.mainWindow.webContents.send("ngrok-url", ngrok_url);
 
         if (ngrok_url) {
           _globals.ngrok_url = ngrok_url;
@@ -135,8 +138,5 @@ export default class LocalServer {
     this.server.close();
     Ngrok.kill();
     console.log("Server Stopped");
-  }
-  public getExpressMainWindow(): BrowserWindow {
-    return this.mainWindow;
   }
 }

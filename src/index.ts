@@ -8,16 +8,16 @@ import fs from "fs-extra";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-class AppController {
+class MainApp {
   private server: LocalServer;
-  private mainWindow: BrowserWindow | null;
+  private static mainWindow: BrowserWindow | null;
   private setupWindow: BrowserWindow | null;
   private appResources: string;
   private envFilePath: string;
 
   constructor() {
     this.server = new LocalServer();
-    this.mainWindow = null;
+    MainApp.mainWindow = null;
     this.setupWindow = null;
     this.appResources = app.getPath("userData");
     this.envFilePath = path.join(this.appResources, ".env");
@@ -31,8 +31,8 @@ class AppController {
     app.on("activate", this.onActivate.bind(this));
     app.on("will-continue-activity", this.onWillContinueActivity.bind(this));
   }
-  getMainWindow() {
-    return this.mainWindow;
+  public static getMainWindow(): BrowserWindow | null {
+    return MainApp.mainWindow;
   }
   private async onReady() {
     try {
@@ -73,9 +73,9 @@ class AppController {
     console.log("[main.ts] Ngrok binary copied to appResources directory");
   }
 
-  private startServer(mainWindow: BrowserWindow) {
+  private startServer() {
     console.log("Server Starting");
-    this.server.start(parseInt(process.env.PRT) || 9000, mainWindow);
+    this.server.start(parseInt(process.env.PRT) || 9000);
     console.log("Server Started");
   }
 
@@ -86,27 +86,26 @@ class AppController {
   }
 
   private createMainWindow() {
-    this.mainWindow = new BrowserWindow({
-      height: 600,
-      width: 800,
+    MainApp.mainWindow = new BrowserWindow({
+      fullscreen: true,
       webPreferences: {
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       },
     });
 
-    this.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-    ipcRenderers(this.mainWindow);
+    MainApp.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    ipcRenderers(MainApp.mainWindow);
 
-    this.mainWindow.webContents.on(
+    MainApp.mainWindow.webContents.on(
       "did-start-loading",
       this.stopLocalServer.bind(this)
     );
-    this.mainWindow.webContents.on("did-stop-loading", () =>
-      this.startServer(this.mainWindow!)
+    MainApp.mainWindow.webContents.on("did-stop-loading", () =>
+      this.startServer()
     );
 
     if (process.env.NODE_ENV === "development") {
-      this.mainWindow.webContents.openDevTools();
+      MainApp.mainWindow.webContents.openDevTools();
     }
   }
 
@@ -133,4 +132,6 @@ class AppController {
 }
 
 // Instantiate the app controller to run the application.
-export default new AppController();
+new MainApp();
+
+export default MainApp;

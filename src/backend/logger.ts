@@ -3,6 +3,7 @@ import { config } from "./config";
 import { BrowserWindow, app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
+import MainApp from "../index";
 
 // WinstonLogger class
 class WinstonLogger {
@@ -10,7 +11,7 @@ class WinstonLogger {
   private logDirectory: string;
   private mainWindow: BrowserWindow;
 
-  constructor(mainWindow?: BrowserWindow) {
+  constructor() {
     // Set up log directory path
     this.logDirectory = path.join(
       process.env.NODE_ENV === "development"
@@ -23,7 +24,7 @@ class WinstonLogger {
 
     // Initialize the logger
     this.logger = this.createLogger();
-    this.mainWindow = mainWindow;
+    this.mainWindow = MainApp?.getMainWindow();
   }
 
   // Ensure that the log directory exists
