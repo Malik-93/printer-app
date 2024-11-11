@@ -1,11 +1,11 @@
-import express, { Express, Request, Response, Application } from "express";
+import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import { name, version } from "../../package.json";
 import PrinterRouter from "./router/printer.routes";
 import PrinterController from "./controllers/printer.controller";
 import path from "path";
 import errorHandler from "./middlewares/error.handler";
-import { _globals, isDev, root_dir } from "./constants";
+import { _globals, root_dir } from "./constants";
 import Ngrok from "./ngrok/Ngrok";
 import WinstonLogger from "./logger";
 import { config } from "./config";
@@ -13,6 +13,7 @@ import axios from "axios";
 import { BrowserWindow } from "electron";
 import { Server, createServer } from "http";
 import MainApp from "../index";
+import PrinterScanner from "./utils/PrinterScanner";
 export default class LocalServer {
   private app: Express;
   private server: Server;
@@ -35,6 +36,8 @@ export default class LocalServer {
     });
 
     this.ADD_SERVER_HTTP = config.addServerHttp;
+    const scanner = new PrinterScanner(`192.168.68`);
+    scanner.scanNetworkForPrinters();
     this.printerController = new PrinterController();
     const printerRoutes = new PrinterRouter(this.printerController);
     this.printerRouter = printerRoutes.getRouter();

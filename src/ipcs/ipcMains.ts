@@ -3,10 +3,10 @@ import path from "path";
 import fs from "fs-extra";
 
 class IPCMains {
-  private appResources: string;
+  private static appResources: string;
 
   constructor() {
-    this.appResources = app.getPath("userData");
+    IPCMains.appResources = app.getPath("userData");
     this.initializeIPC();
   }
 
@@ -42,11 +42,14 @@ class IPCMains {
     data: Record<string, string>
   ) {
     try {
+      console.log("IPCMains.appResources", IPCMains.appResources);
+
       let envContent: string = "";
       Object.keys(data).forEach((key) => {
         envContent += `${key}=${data[key]}\n`;
       });
-      await fs.writeFile(path.join(this.appResources, ".env"), envContent);
+
+      await fs.writeFile(path.join(IPCMains.appResources, ".env"), envContent);
 
       console.log("Env variables saved successfully.");
       const webContents = event.sender;

@@ -17,6 +17,7 @@ class MainApp {
 
   constructor() {
     this.server = new LocalServer();
+    const ipcMains = new IPCMains();
     MainApp.mainWindow = null;
     this.setupWindow = null;
     this.appResources = app.getPath("userData");
@@ -37,9 +38,6 @@ class MainApp {
   private async onReady() {
     try {
       await this.copyNgrokBin();
-
-      new IPCMains();
-
       if (fs.existsSync(this.envFilePath)) {
         this.createMainWindow();
       } else {
