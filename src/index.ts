@@ -1,6 +1,6 @@
 import { app, BrowserWindow, screen } from "electron";
-import ipcMains from "./ipcs/ipcMains";
-import ipcRenderers from "./ipcs/ipcRenderers";
+import IPCMains from "./ipcs/ipcMains";
+import IPCRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
 import path from "path";
 import fs from "fs-extra";
@@ -37,7 +37,8 @@ class MainApp {
   private async onReady() {
     try {
       await this.copyNgrokBin();
-      ipcMains();
+
+      new IPCMains();
 
       if (fs.existsSync(this.envFilePath)) {
         this.createMainWindow();
@@ -96,12 +97,14 @@ class MainApp {
     });
 
     MainApp.mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-    ipcRenderers(MainApp.mainWindow);
+
+    new IPCRenderers();
 
     MainApp.mainWindow.webContents.on(
       "did-start-loading",
       this.stopLocalServer.bind(this)
     );
+
     MainApp.mainWindow.webContents.on("did-stop-loading", () =>
       this.startServer()
     );

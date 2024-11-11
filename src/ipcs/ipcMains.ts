@@ -1,29 +1,52 @@
 import { BrowserWindow, ipcMain, app } from "electron";
 import path from "path";
 import fs from "fs-extra";
-const appResources = app.getPath("userData");
-export default () => {
-  ipcMain.on("set-title", (event, title) => {
+
+class IPCMains {
+  private appResources: string;
+
+  constructor() {
+    this.appResources = app.getPath("userData");
+    this.initializeIPC();
+  }
+
+  // Initialize IPC handlers
+  private initializeIPC() {
+    ipcMain.on("set-title", this.setTitle);
+    ipcMain.on("print", this.print);
+    ipcMain.handle("save-env-variables", this.saveEnvVariables);
+    ipcMain.handle("app-reload", this.reloadApp);
+  }
+
+  // Set window title
+  private setTitle(event: Electron.IpcMainEvent, title: string) {
     const webContents = event.sender;
     const window = BrowserWindow.fromWebContents(webContents);
     if (window) {
       window.setTitle(title);
     }
-  });
-  ipcMain.on("print", (event, printer_name) => {
+  }
+
+  // Print to the specified printer
+  private print(event: Electron.IpcMainEvent, printer_name: string) {
     const webContents = event.sender;
     const window = BrowserWindow.fromWebContents(webContents);
     if (window) {
       window.webContents.print({ silent: true, deviceName: printer_name });
     }
-  });
-  ipcMain.handle("save-env-variables", async (event, data) => {
+  }
+
+  // Save environment variables to file
+  private async saveEnvVariables(
+    event: Electron.IpcMainInvokeEvent,
+    data: Record<string, string>
+  ) {
     try {
       let envContent: string = "";
       Object.keys(data).forEach((key) => {
         envContent += `${key}=${data[key]}\n`;
       });
-      await fs.writeFile(path.join(appResources, ".env"), envContent);
+      await fs.writeFile(path.join(this.appResources, ".env"), envContent);
 
       console.log("Env variables saved successfully.");
       const webContents = event.sender;
@@ -34,11 +57,14 @@ export default () => {
     } catch (err) {
       console.error("Error saving env variables:", err);
     }
-  });
+  }
 
-  ipcMain.handle("app-reload", (event) => {
+  // Reload the main app window
+  private reloadApp(event: Electron.IpcMainInvokeEvent) {
     const webContents = event.sender;
     const mainWindow = BrowserWindow.fromWebContents(webContents);
-    mainWindow.reload();
-  });
-};
+    mainWindow?.reload();
+  }
+}
+
+export default IPCMains;
