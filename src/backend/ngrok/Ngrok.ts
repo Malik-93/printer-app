@@ -1,5 +1,4 @@
 import { _globals, port } from "../constants";
-import WinstonLogger from "../logger";
 import path from "path";
 import fs from "fs";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
@@ -7,7 +6,6 @@ import { app } from "electron";
 class Ngrok {
   private process: ChildProcessWithoutNullStreams;
   private binaryPath: string;
-  private logger: WinstonLogger;
   public init(): Promise<string> {
     try {
       _globals.logger.info(`[ngrok] -> Initializing tunnel...`);

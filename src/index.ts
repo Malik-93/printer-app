@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, screen } from "electron";
 import ipcMains from "./ipcs/ipcMains";
 import ipcRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
@@ -86,8 +86,10 @@ class MainApp {
   }
 
   private createMainWindow() {
+    const { height, width } = screen.getPrimaryDisplay().workAreaSize;
     MainApp.mainWindow = new BrowserWindow({
-      fullscreen: true,
+      height,
+      width,
       webPreferences: {
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       },
