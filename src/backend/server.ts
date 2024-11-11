@@ -105,6 +105,8 @@ export default class LocalServer {
 
         this.logger = new WinstonLogger();
 
+        console.log = (...args: any[]) => this.logger.info(args.join(" "));
+
         _globals.logger = this.logger;
 
         const server_url = `http://localhost:${port}`;
