@@ -3,7 +3,7 @@ import { config } from "./config";
 import { BrowserWindow, app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
-import MainApp from "../index";
+import { _globals } from "./constants";
 
 // WinstonLogger class
 class WinstonLogger {
@@ -24,7 +24,7 @@ class WinstonLogger {
 
     // Initialize the logger
     this.logger = this.createLogger();
-    this.mainWindow = MainApp?.getMainWindow();
+    this.mainWindow = _globals.mainWindow;
   }
 
   // Ensure that the log directory exists
@@ -36,7 +36,6 @@ class WinstonLogger {
 
   // Custom function to run on every log entry
   private customLogFunction(log: LogEntry): void {
-    console.log("Custom function triggered for log:", log.message);
     if (this.mainWindow) {
       this.mainWindow.webContents.send("log-message", `${log.message} \n`);
     }

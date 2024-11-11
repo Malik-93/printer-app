@@ -1,11 +1,15 @@
 import path from "path";
 import { config } from "../config";
+import { BrowserWindow } from "electron";
+import WinstonLogger from "../logger";
 export const port: number = parseInt(config.port || "0") || 9000;
 export const isDev = config.env === "development";
 export let _globals = {
   store_email: "",
   store_mac: "",
   ngrok_url: "",
+  mainWindow: null as BrowserWindow,
+  logger: null as WinstonLogger,
 };
 export const root_dir = process.cwd();
 export const cache_dir = path.join(root_dir, "cache-printer-app");

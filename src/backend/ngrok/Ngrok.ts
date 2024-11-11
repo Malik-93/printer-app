@@ -1,4 +1,4 @@
-import { port } from "../constants";
+import { _globals, port } from "../constants";
 import WinstonLogger from "../logger";
 import path from "path";
 import fs from "fs";
@@ -8,12 +8,9 @@ class Ngrok {
   private process: ChildProcessWithoutNullStreams;
   private binaryPath: string;
   private logger: WinstonLogger;
-  constructor() {
-    this.logger = new WinstonLogger();
-  }
   public init(): Promise<string> {
     try {
-      this.logger.info(`[ngrok] -> Initializing tunnel...`);
+      _globals.logger.info(`[ngrok] -> Initializing tunnel...`);
       console.log(`\x1b[33m [ngrok] -> Initializing tunnel... \x1b[0m \n`);
       this.binaryPath = path.join(app.getPath("userData"), "bin", "ngrok");
 
@@ -23,7 +20,7 @@ class Ngrok {
           "\x1b[32m Ngrok binary not found at: \x1b[0m \n",
           this.binaryPath
         );
-        this.logger.info(
+        _globals.logger.info(
           `[ngrok] -> Ngrok binary not found at: ${this.binaryPath}`
         );
         return;
@@ -31,7 +28,7 @@ class Ngrok {
         console.log(
           `\x1b[32m Ngrok binary found at: ${this.binaryPath} \x1b[0m \n`
         );
-        this.logger.info(
+        _globals.logger.info(
           `[ngrok] -> Ngrok binary found at: ${this.binaryPath}`
         );
       }
@@ -57,7 +54,7 @@ class Ngrok {
             const match = data.toString().match(/url=(https?:\/\/\S+)/);
             if (match) {
               const tunnel_url = match[1];
-              this.logger.info(
+              _globals.logger.info(
                 `[ngrok].connect -> tunnel started at: ${tunnel_url}`
               );
               console.log(
@@ -71,28 +68,28 @@ class Ngrok {
         this.process.stderr.on("data", (data) => {
           // Error output from ngrok process
           console.error(`stderr: ${data.toString()}`);
-          this.logger.error(`stderr: ${data.toString()}`);
+          _globals.logger.error(`stderr: ${data.toString()}`);
         });
 
         this.process.on("close", (code) => {
           console.log(`ngrok process exited with code ${code}`);
-          this.logger.info(`ngrok process exited with code ${code}`);
+          _globals.logger.info(`ngrok process exited with code ${code}`);
         });
         // Handle any errors related to spawning the process
         this.process.on("error", (err) => {
           console.error(`Failed to start ngrok process: ${err}`);
-          this.logger.error(`Failed to start ngrok process: ${err}`);
+          _globals.logger.error(`Failed to start ngrok process: ${err}`);
           reject(err);
         });
 
         this.process.on("exit", (code) => {
           console.log(`ngrok process exited with code ${code}`);
-          this.logger.info(`ngrok process exited with code ${code}`);
+          _globals.logger.info(`ngrok process exited with code ${code}`);
           this.process.kill("SIGTERM");
         });
       });
     } catch (error: any) {
-      this.logger.error(`[ngrok].error -> ${error}`);
+      _globals.logger.error(`[ngrok].error -> ${error}`);
       console.log(`\x1b[31m [ngrok].error -> ${error} \x1b[0m \n`);
     }
   }
@@ -100,10 +97,10 @@ class Ngrok {
   public kill() {
     try {
       console.log("[ngrok] -> killing tunnel on app exit \n");
-      this.logger.info("[ngrok] -> killing tunnel on app exit");
+      _globals.logger.info("[ngrok] -> killing tunnel on app exit");
       this.process.kill("SIGTERM");
     } catch (error) {
-      this.logger.error(`[ngrok].kill -> error: ${JSON.stringify(error)}`);
+      _globals.logger.error(`[ngrok].kill -> error: ${JSON.stringify(error)}`);
       console.log(`[ngrok].kill -> error: ${JSON.stringify(error)} \n`);
     }
   }
@@ -132,7 +129,7 @@ class Ngrok {
       });
     } catch (error) {
       console.log(`[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`);
-      this.logger.error(
+      _globals.logger.error(
         `[ngrok].getVersion -> error: ${JSON.stringify(error)} \n\n`
       );
     }

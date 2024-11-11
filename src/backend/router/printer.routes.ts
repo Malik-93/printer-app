@@ -1,10 +1,9 @@
 import express, { Request, Response, Router } from "express";
 import PrinterController from "../controllers/printer.controller";
-import WinstonLogger from "../logger";
 import upload from "../multer/upload";
 import { IFormPrintRequest } from "./../interfaces/printerInterface";
 import { unlinkFile } from "../utils";
-const logger = new WinstonLogger();
+import { _globals } from "../constants";
 const router: Router = express.Router();
 
 export default class PrinterRouter {
@@ -32,7 +31,7 @@ export default class PrinterRouter {
           return res.status(result.statusCode || 200).json(result);
         } catch (error) {
           // console.log(`\x1b[31m __[printer.execute]__ An error accured: ${error} \x1b[0m`)
-          logger.error({
+          _globals.logger.error({
             endpoint: "/api/printer/print",
             error,
           });

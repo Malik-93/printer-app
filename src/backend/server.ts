@@ -99,10 +99,13 @@ export default class LocalServer {
 
     this.server.listen(port, "localhost", async () => {
       try {
-
         this.mainWindow = MainApp?.getMainWindow()!;
 
+        _globals.mainWindow = this.mainWindow;
+
         this.logger = new WinstonLogger();
+
+        _globals.logger = this.logger;
 
         const server_url = `http://localhost:${port}`;
 

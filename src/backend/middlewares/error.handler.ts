@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../models/Error";
-import WinstonLogger from "../logger";
-const logger = new WinstonLogger();
+import { _globals } from "../constants";
 /**
  * Custom error handler to standardize error objects returned to
  * the client
@@ -29,7 +28,7 @@ const errorHandler = (
   // response to client to prevent memory leaks in case you decide to
   // NOT use, like in this example, the NextFunction .i.e., next(new Error())
   const status = (customError as CustomError).status;
-  logger.error({
+  _globals.logger.error({
     path: "/middlewares/error.handler.ts",
     error: JSON.stringify({ status, ...customError }),
   });
