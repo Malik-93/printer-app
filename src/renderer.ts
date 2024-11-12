@@ -50,16 +50,23 @@ class RendererApp {
     const headerRow = document.createElement("tr");
 
     headerRow.className = "hover:bg-gray-50";
-    table.className = "min-w-full border border-gray-300 divide-y divide-gray-200";
+    table.className = "border border-gray-300 divide-y divide-gray-200";
     thead.className = "bg-gray-100";
     tbody.className = "bg-white divide-y divide-gray-200";
 
-    const headers = ["Name", "Description", "Status", "Device URI", "Device URI Supported"];
+    const headers = [
+      "Name",
+      "Description",
+      "Status",
+      "Device URI",
+      "Device URI Supported",
+    ];
     headers.forEach((header) => {
       const th = document.createElement("th");
       th.textContent = header;
       th.scope = "col";
-      th.className = "px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider";
+      th.className =
+        "px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider";
       headerRow.appendChild(th);
     });
     thead.appendChild(headerRow);
@@ -89,22 +96,23 @@ class RendererApp {
   }
 
   private displayLogMessage(logMsg: string) {
-    const logContainer = document.getElementById("logContainer");
-    const ul = document.getElementById("logs_list") || document.createElement("ul");
-    ul.id = "logs_list";
+    const ul = document.getElementById("logs_list") as HTMLUListElement;
     const li = document.createElement("li");
-    li.className = "m-2";
+    li.className = "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2";
+
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
     li.textContent = `${hours}:${minutes}:${seconds} - ${logMsg}`;
     ul.appendChild(li);
-    logContainer?.appendChild(ul);
+    ul.scrollTop = ul.scrollHeight;
   }
 
   private displayNgrokUrl(url: string) {
-    const ngrokAnchor = document.getElementById("ngrok_url") as HTMLAnchorElement;
+    const ngrokAnchor = document.getElementById(
+      "ngrok_url"
+    ) as HTMLAnchorElement;
     if (ngrokAnchor) {
       ngrokAnchor.textContent = url;
       ngrokAnchor.href = url;

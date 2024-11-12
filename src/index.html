@@ -5,9 +5,9 @@
     <title>GMD Printer App</title>
   </head>
   <body class="p-10">
-    <div class="w-full h-full p-4 bg-white" id="printer_app_container">
+    <div class="max-w-[95vw] h-full p-4 bg-white" id="printer_app_container">
       <div
-        class="flex flex-row justify-between items-center flex-wrap gap-4 mb-4"
+        class="flex flex-row justify-around items-center flex-wrap gap-4 mb-4"
       >
         <!-- Search Input with Icon -->
         <div class="relative w-full md:w-1/4">
@@ -59,7 +59,7 @@
       </div>
 
       <!-- Printers Table Section -->
-      <div class="w-full bg-gray-50 rounded-lg shadow mb-6">
+      <div class="max-w-max bg-gray-50 rounded-lg shadow mb-6">
         <p class="py-2 font-bold text-xl px-5 my-3 bg-gray-100">
           Printers in network
         </p>
@@ -67,7 +67,7 @@
       </div>
 
       <!-- Logs Section -->
-      <div class="w-full bg-gray-50 rounded-lg shadow">
+      <div class="max-w-max bg-gray-50 rounded-lg shadow">
         <p class="py-2 font-bold text-xl px-5 my-3 bg-gray-100">
           Printer app logs
         </p>
@@ -75,7 +75,7 @@
           class="flex h-96 border border-gray-300 my-3 rounded-md overflow-auto"
           id="logContainer"
         >
-          <ul id="logs_list" class="p-5 space-y-2 text-gray-700"></ul>
+          <ul id="logs_list"></ul>
         </div>
       </div>
     </div>
