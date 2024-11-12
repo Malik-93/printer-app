@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu, app } from "electron";
+import { BrowserWindow, app } from "electron";
 import fs from "fs-extra";
 import path from "path";
 import MainApp from "../index";

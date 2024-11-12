@@ -9,18 +9,24 @@ class RendererApp {
 
     // Event listeners for buttons
     this.initializeReloadAppButton();
+    this.initializeScanPrintersButton();
 
     // IPC event listeners
     this.initializeIpcListeners();
   }
 
   private initializeReloadAppButton() {
-    const reloadAppBtn = document.getElementById("reload_app_btn");
-    if (reloadAppBtn) {
-      reloadAppBtn.addEventListener("click", () => {
-        window.ipc.reloadApp();
+    document.getElementById("reload_app_btn").addEventListener("click", () => {
+      window.ipc.reloadApp();
+    });
+  }
+
+  private initializeScanPrintersButton() {
+    document
+      .getElementById("scan_printers_btn")
+      .addEventListener("click", () => {
+        window.ipc.scanPrinters();
       });
-    }
   }
 
   private initializeIpcListeners() {
@@ -44,13 +50,14 @@ class RendererApp {
   private displayPrinters(printers: Electron.PrinterInfo[]) {
     console.log("Printers:", printers);
     const printersContainer = document.getElementById("printers_container");
+    printersContainer.innerHTML = "";
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     const tbody = document.createElement("tbody");
     const headerRow = document.createElement("tr");
 
     headerRow.className = "hover:bg-gray-50";
-    table.className = "border border-gray-300 divide-y divide-gray-200";
+    table.className = "w-full border border-gray-300 divide-y divide-gray-200";
     thead.className = "bg-gray-100";
     tbody.className = "bg-white divide-y divide-gray-200";
 
@@ -122,7 +129,6 @@ class RendererApp {
   }
 
   private displaySystemValues(sysVals: { [key: string]: string }) {
-    console.log("sysVals", sysVals);
     const storeEmail = document.getElementById("storeEmail");
     if (storeEmail && sysVals.STORE_EMAIL) {
       storeEmail.textContent = sysVals.STORE_EMAIL;

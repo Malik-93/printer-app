@@ -16,6 +16,7 @@ class IPCMains {
     ipcMain.on("print", this.print);
     ipcMain.handle("save-env-variables", this.saveEnvVariables);
     ipcMain.handle("app-reload", this.reloadApp);
+    ipcMain.handle("scan-printers", this.scanPrinters);
   }
 
   // Set window title
@@ -67,6 +68,14 @@ class IPCMains {
     const webContents = event.sender;
     const mainWindow = BrowserWindow.fromWebContents(webContents);
     mainWindow?.reload();
+  }
+
+  // Reload the main app window
+  private async scanPrinters(event: Electron.IpcMainInvokeEvent) {
+    const webContents = event.sender;
+    const mainWindow = BrowserWindow.fromWebContents(webContents);
+    const printers = await mainWindow.webContents.getPrintersAsync();
+    mainWindow.webContents.send("on-printers", printers);
   }
 }
 

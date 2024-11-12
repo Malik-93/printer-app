@@ -14,6 +14,7 @@ declare global {
         callback: (sysVals: { [key: string]: string }) => void
       ) => void;
       reloadApp: () => void;
+      scanPrinters: () => void;
     };
   }
 }
