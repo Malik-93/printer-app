@@ -123,7 +123,7 @@ class RendererApp {
     const ul = document.getElementById("logs_list") as HTMLUListElement;
     const li = document.createElement("li");
     li.className =
-      "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2 min-w-full leading-loose";
+      "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2 min-w-full leading-loose font-semibold";
 
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
