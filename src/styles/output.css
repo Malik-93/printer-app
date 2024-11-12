@@ -847,10 +847,6 @@ video {
   text-transform: uppercase;
 }
 
-.leading-relaxed {
-  line-height: 1.625;
-}
-
 .leading-loose {
   line-height: 2;
 }

@@ -40,12 +40,16 @@ class IPCRenderers {
 
   // Initialize the events such as "did-finish-load" to load printers and system values
   private initializeEvents() {
-    this.mainWindow.webContents.on("did-finish-load", async () => {
+    const getPrintersCallback = async () => {
       await this.getPrintersAsync();
       const sysBuffer = await fs.readFile(this.envFilePath);
       const sysValues = this.parseEnvBuffer(sysBuffer);
       this.mainWindow.webContents.send("show-system-values", sysValues);
-    });
+    };
+
+    this.mainWindow.webContents.on("did-finish-load", getPrintersCallback);
+
+    setInterval(getPrintersCallback, 10 * 60000); // Refresh the printers every 10 minutes
   }
 }
 
