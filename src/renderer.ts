@@ -105,7 +105,7 @@ class RendererApp {
   private displayLogMessage(logMsg: string) {
     const ul = document.getElementById("logs_list") as HTMLUListElement;
     const li = document.createElement("li");
-    li.className = "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2";
+    li.className = "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2 min-w-full leading-loose";
 
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
