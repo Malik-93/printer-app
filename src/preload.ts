@@ -12,6 +12,7 @@ class PreloadAPI {
     this.showSystemValues = this.showSystemValues.bind(this);
     this.reloadApp = this.reloadApp.bind(this);
     this.scanPrinters = this.scanPrinters.bind(this);
+    this.setupWindow = this.setupWindow.bind(this);
   }
 
   setTitle(title: string) {
@@ -54,6 +55,9 @@ class PreloadAPI {
 
   scanPrinters() {
     ipcRenderer.invoke("scan-printers");
+  }
+  setupWindow() {
+    ipcRenderer.send("setup-window");
   }
 }
 

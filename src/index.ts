@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, ipcMain, screen } from "electron";
 import IPCMains from "./ipcs/ipcMains";
 import IPCRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
@@ -31,6 +31,10 @@ class MainApp {
     app.on("window-all-closed", this.onWindowAllClosed.bind(this));
     app.on("activate", this.onActivate.bind(this));
     app.on("will-continue-activity", this.onWillContinueActivity.bind(this));
+    this.initSetupWindow();
+  }
+  private initSetupWindow() {
+    ipcMain.on("setup-window", this.createSetupWindow);
   }
   public static getMainWindow(): BrowserWindow | null {
     return MainApp.mainWindow;
@@ -113,14 +117,15 @@ class MainApp {
   }
 
   private createSetupWindow() {
+    const { height, width } = screen.getPrimaryDisplay().workAreaSize;
     const setupUrl = MAIN_WINDOW_WEBPACK_ENTRY.replace(
       "main_window",
       "setup_window"
     );
 
     this.setupWindow = new BrowserWindow({
-      height: 600,
-      width: 800,
+      height: height - 200,
+      width: width - 200,
       webPreferences: {
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       },

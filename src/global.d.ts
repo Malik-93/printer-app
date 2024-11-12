@@ -15,6 +15,7 @@ declare global {
       ) => void;
       reloadApp: () => void;
       scanPrinters: () => void;
+      setupWindow: () => void;
     };
   }
 }

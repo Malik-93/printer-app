@@ -10,11 +10,15 @@ class RendererApp {
     // Event listeners for buttons
     this.initializeReloadAppButton();
     this.initializeScanPrintersButton();
-
+    this.initializeSetupButton();
     // IPC event listeners
     this.initializeIpcListeners();
   }
-
+  private initializeSetupButton() {
+    document.getElementById("setup_btn").addEventListener("click", () => {
+      window.ipc.setupWindow();
+    });
+  }
   private initializeReloadAppButton() {
     document.getElementById("reload_app_btn").addEventListener("click", () => {
       window.ipc.reloadApp();
@@ -105,7 +109,8 @@ class RendererApp {
   private displayLogMessage(logMsg: string) {
     const ul = document.getElementById("logs_list") as HTMLUListElement;
     const li = document.createElement("li");
-    li.className = "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2 min-w-full leading-loose";
+    li.className =
+      "px-4 py-5 bg-white shadow text-sm text-gray-800 m-2 min-w-full leading-loose";
 
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, "0");
