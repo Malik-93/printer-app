@@ -2,6 +2,7 @@ import "./index.css";
 import "./styles/output.css";
 
 class RendererApp {
+  private previousColor: string | null = null;
   constructor() {
     console.log(
       '👋 This message is being logged by "renderer.js", included via webpack'
@@ -106,7 +107,19 @@ class RendererApp {
     printersContainer?.appendChild(table);
   }
 
+  private getRandomColor() {
+    let color;
+    do {
+      color = `#${Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, "0")}`;
+    } while (color === this.previousColor); // Ensure the new color is different from the last one
+
+    this.previousColor = color; // Update the previous color for the next call
+    return color;
+  }
   private displayLogMessage(logMsg: string) {
+    logMsg = logMsg.replace(/\[\d+m/g, "");
     const ul = document.getElementById("logs_list") as HTMLUListElement;
     const li = document.createElement("li");
     li.className =
@@ -117,6 +130,7 @@ class RendererApp {
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
     li.textContent = `${hours}:${minutes}:${seconds} - ${logMsg}`;
+    li.style.color = this.getRandomColor();
     ul.appendChild(li);
     ul.scrollTop = ul.scrollHeight;
   }
