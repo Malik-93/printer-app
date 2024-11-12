@@ -12,26 +12,7 @@ class IPCRenderers {
     this.appResources = app.getPath("userData");
     this.envFilePath = path.join(this.appResources, ".env");
     this.mainWindow = MainApp.getMainWindow();
-    this.setupMenu();
     this.initializeEvents();
-  }
-
-  // Set up the application menu with a custom "Get Printers" option
-  private setupMenu() {
-    const defaultMenu = Menu.getApplicationMenu()?.items || [];
-    const menu = Menu.buildFromTemplate([
-      ...defaultMenu,
-      {
-        label: app.name,
-        submenu: [
-          {
-            click: async () => await this.getPrintersAsync(),
-            label: "Get Printers",
-          },
-        ],
-      },
-    ]);
-    Menu.setApplicationMenu(menu);
   }
 
   // Retrieve the list of printers asynchronously and send them to the renderer process
