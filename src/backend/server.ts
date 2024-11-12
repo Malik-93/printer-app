@@ -11,12 +11,13 @@ import WinstonLogger from "./logger";
 import { config } from "./config";
 import axios from "axios";
 import { BrowserWindow } from "electron";
-import { Server, createServer } from "http";
+import { IncomingMessage, Server, ServerResponse } from "http";
 import MainApp from "../index";
 import PrinterScanner from "./utils/PrinterScanner";
 export default class LocalServer {
   private app: Express;
-  private server: Server;
+  private server: ReturnType<Express["listen"]>;
+
   private printerRouter;
   private printerController;
   private ADD_SERVER_HTTP;
@@ -98,9 +99,7 @@ export default class LocalServer {
   }
 
   public start(port: number) {
-    this.server = createServer(this.app);
-
-    this.server.listen(port, "localhost", async () => {
+    this.server = this.app.listen(port, "localhost", async () => {
       try {
         this.mainWindow = MainApp?.getMainWindow()!;
 
