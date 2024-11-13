@@ -1,16 +1,11 @@
 import { BrowserWindow, app } from "electron";
-import path from "path";
 import MainApp from "../index";
 import { getSystemValues } from "../helpers";
 
 class IPCRenderers {
-  private appResources: string;
-  private envFilePath: string;
   private mainWindow: BrowserWindow;
 
   constructor() {
-    this.appResources = app.getPath("userData");
-    this.envFilePath = path.join(this.appResources, ".env");
     this.mainWindow = MainApp.getMainWindow();
     this.initializeEvents();
   }

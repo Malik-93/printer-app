@@ -4,7 +4,7 @@ import IPCRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
 import path from "path";
 import fs from "fs-extra";
-import { getSystemValues } from "./helpers";
+import { appResources, envFilePath, getSystemValues } from "./helpers";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -13,16 +13,12 @@ class MainApp {
   private server: LocalServer;
   private static mainWindow: BrowserWindow | null;
   private setupWindow: BrowserWindow | null;
-  private appResources: string;
-  private envFilePath: string;
 
   constructor() {
     this.server = new LocalServer();
     const ipcMains = new IPCMains();
     MainApp.mainWindow = null;
     this.setupWindow = null;
-    this.appResources = app.getPath("userData");
-    this.envFilePath = path.join(this.appResources, ".env");
 
     if (require("electron-squirrel-startup")) {
       app.quit();
@@ -43,7 +39,7 @@ class MainApp {
   private async onReady() {
     try {
       await this.copyNgrokBin();
-      if (fs.existsSync(this.envFilePath)) {
+      if (fs.existsSync(envFilePath)) {
         this.createMainWindow();
       } else {
         this.createSetupWindow();
@@ -71,7 +67,7 @@ class MainApp {
 
   private async copyNgrokBin() {
     const sourcePath = path.join(__dirname, "bin/ngrok");
-    const destinationPath = path.join(this.appResources, "bin/ngrok");
+    const destinationPath = path.join(appResources, "bin/ngrok");
     await fs.copy(sourcePath, destinationPath);
     await fs.chmod(destinationPath, 0o755);
     console.log("[main.ts] Ngrok binary copied to appResources directory");

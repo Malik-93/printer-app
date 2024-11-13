@@ -1,12 +1,9 @@
 import { BrowserWindow, ipcMain, app } from "electron";
-import path from "path";
 import fs from "fs-extra";
+import { envFilePath } from "../helpers";
 
 class IPCMains {
-  private static appResources: string;
-
   constructor() {
-    IPCMains.appResources = app.getPath("userData");
     this.initializeIPC();
   }
 
@@ -43,8 +40,6 @@ class IPCMains {
     data: Record<string, string>
   ) {
     try {
-      const envFilePath = path.join(IPCMains.appResources, ".env");
-
       // Read the existing .env content
       let envContent = "";
       try {
