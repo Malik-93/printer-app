@@ -12,45 +12,25 @@
             Setup Form
           </h2>
           <form id="setup-form" action="#">
-            <!-- storeEmail Input -->
-            <div class="mb-4">
-              <label
-                for="storeEmail"
-                class="block text-gray-700 text-sm font-medium mb-2"
-                >Store Email</label
-              >
-              <input
-                type="storeEmail"
-                id="storeEmail"
-                name="storeEmail"
-                placeholder="Enter your secret key"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
+            <!-- New Fields Container -->
+            <div id="new-fields-container"></div>
 
-            <!-- Secret Key Input -->
-            <div class="mb-4">
-              <label
-                for="addServerHttp"
-                class="block text-gray-700 text-sm font-medium mb-2"
-                >Add Server Http</label
-              >
-              <input
-                type="text"
-                id="addServerHttp"
-                name="addServerHttp"
-                placeholder="Enter your secret key"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#21688B] focus:border-[#21688B]"
-              />
-            </div>
-
-            <!-- Save Button -->
-            <div class="mb-4">
+            <!-- Add New Field Button -->
+            <div class="mb-4 flex justify-center">
               <button
-                type="submit"
-                class="w-full py-2 px-4 bg-[#21688B] text-white font-semibold rounded-lg hover:bg-[#21688B] focus:outline-none focus:ring-2 focus:ring-[#21688B] focus:ring-offset-2"
+                type="button"
+                id="add-new-field"
+                class="py-2 px-4 bg-[#21688B] text-white font-semibold rounded-lg hover:bg-[#21688B] focus:outline-none focus:ring-2 focus:ring-[#21688B] focus:ring-offset-2 flex items-center"
               >
-                Save
+                <svg
+                  class="w-6 h-6 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M12 5v14m7-7H5" stroke="white" stroke-width="2" />
+                </svg>
+                Add New Field
               </button>
             </div>
           </form>

@@ -1,7 +1,7 @@
 import { BrowserWindow, app } from "electron";
-import fs from "fs-extra";
 import path from "path";
 import MainApp from "../index";
+import { getSystemValues } from "../helpers";
 
 class IPCRenderers {
   private appResources: string;
@@ -21,30 +21,12 @@ class IPCRenderers {
     this.mainWindow.webContents.send("on-printers", printers);
   }
 
-  // Parse the environment variables from a buffer
-  private parseEnvBuffer(buffer: Buffer): { [key: string]: string } {
-    const envObject: { [key: string]: string } = {};
-
-    // Convert the buffer to a string and split it into lines
-    buffer
-      .toString()
-      .trim()
-      .split("\n")
-      .forEach((line) => {
-        const [key, value] = line.split("=");
-        envObject[key] = value;
-      });
-
-    return envObject;
-  }
-
   // Initialize the events such as "did-finish-load" to load printers and system values
   private initializeEvents() {
     const getPrintersCallback = async () => {
       await this.getPrintersAsync();
-      const sysBuffer = await fs.readFile(this.envFilePath);
-      const sysValues = this.parseEnvBuffer(sysBuffer);
-      this.mainWindow.webContents.send("show-system-values", sysValues);
+      const systemValues = await getSystemValues();
+      this.mainWindow.webContents.send("show-system-values", systemValues);
     };
 
     this.mainWindow.webContents.on("did-finish-load", getPrintersCallback);

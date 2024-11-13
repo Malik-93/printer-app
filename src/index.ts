@@ -4,6 +4,7 @@ import IPCRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
 import path from "path";
 import fs from "fs-extra";
+import { getSystemValues } from "./helpers";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -132,6 +133,12 @@ class MainApp {
     });
 
     this.setupWindow.loadURL(setupUrl);
+    this.setupWindow.webContents.openDevTools();
+
+    this.setupWindow.webContents.on("did-finish-load", async () => {
+      const systemValues = await getSystemValues();
+      this.setupWindow.webContents.send("show-system-values", systemValues);
+    });
     this.setupWindow.on("closed", () => {
       this.setupWindow = null;
       this.createMainWindow();

@@ -148,6 +148,8 @@ class RendererApp {
   }
 
   private displaySystemValues(sysVals: { [key: string]: string }) {
+    console.log("System Values:", sysVals);
+    
     const storeEmail = document.getElementById("storeEmail");
     if (storeEmail && sysVals.STORE_EMAIL) {
       storeEmail.textContent = sysVals.STORE_EMAIL;

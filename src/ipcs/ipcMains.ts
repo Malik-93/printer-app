@@ -43,21 +43,38 @@ class IPCMains {
     data: Record<string, string>
   ) {
     try {
-      console.log("IPCMains.appResources", IPCMains.appResources);
+      const envFilePath = path.join(IPCMains.appResources, ".env");
 
-      let envContent: string = "";
+      // Read the existing .env content
+      let envContent = "";
+      try {
+        envContent = await fs.readFile(envFilePath, "utf-8");
+      } catch (error) {
+        if (error.code !== "ENOENT") throw error; // Ignore if file doesn't exist
+      }
+
+      // Parse existing .env content into an object
+      const existingData = envContent
+        .split("\n")
+        .reduce((acc: { [key: string]: string }, line) => {
+          const [key, ...rest] = line.split("=");
+          if (key) acc[key.trim()] = rest.join("=").trim();
+          return acc;
+        }, {});
+
+      // Update existing keys or add new ones as needed
       Object.keys(data).forEach((key) => {
-        envContent += `${key}=${data[key]}\n`;
+        existingData[key] = data[key];
       });
 
-      await fs.writeFile(path.join(IPCMains.appResources, ".env"), envContent);
+      // Convert merged data back to .env format
+      const updatedEnvContent = Object.entries(existingData)
+        .map(([key, value]) => `${key}=${value}`)
+        .join("\n");
 
-      console.log("Env variables saved successfully.");
-      const webContents = event.sender;
-      const setupWindow = BrowserWindow.fromWebContents(webContents);
-      if (setupWindow) {
-        setupWindow.close();
-      }
+      // Write the updated content to the .env file
+      await fs.writeFile(envFilePath, updatedEnvContent);
+      console.log("Env variables updated successfully.");
     } catch (err) {
       console.error("Error saving env variables:", err);
     }

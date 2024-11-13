@@ -29,7 +29,7 @@ class PreloadAPI {
 
   onLogMessage(callback: (message: string) => void) {
     ipcRenderer.on("log-message", (event, message) => {
-      console.log("[preload].logMessage ran...");
+      console.log("[preload].logMessage :", message);
       callback(message);
     });
   }
