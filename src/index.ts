@@ -108,9 +108,9 @@ class MainApp {
       this.startServer()
     );
 
-    if (process.env.NODE_ENV === "development") {
-      MainApp.mainWindow.webContents.openDevTools();
-    }
+    // if (process.env.NODE_ENV === "development") {
+    //   MainApp.mainWindow.webContents.openDevTools();
+    // }
   }
 
   private createSetupWindow() {
@@ -121,15 +121,14 @@ class MainApp {
     );
 
     this.setupWindow = new BrowserWindow({
-      height: height - 200,
-      width: width - 200,
+      height: height - 300,
+      width: width - 500,
       webPreferences: {
         preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       },
     });
 
     this.setupWindow.loadURL(setupUrl);
-    this.setupWindow.webContents.openDevTools();
 
     this.setupWindow.webContents.on("did-finish-load", async () => {
       const systemValues = await getSystemValues();
@@ -139,6 +138,10 @@ class MainApp {
       this.setupWindow = null;
       this.createMainWindow();
     });
+
+    // if (process.env.NODE_ENV === "development") {
+    //   this.setupWindow.webContents.openDevTools();
+    // }
   }
 }
 

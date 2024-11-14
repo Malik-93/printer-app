@@ -9,6 +9,7 @@ class PreloadAPI {
     this.onLogMessage = this.onLogMessage.bind(this);
     this.onNgrokUrl = this.onNgrokUrl.bind(this);
     this.saveEnvVariables = this.saveEnvVariables.bind(this);
+    this.deleteEnvVariable = this.deleteEnvVariable.bind(this);
     this.showSystemValues = this.showSystemValues.bind(this);
     this.reloadApp = this.reloadApp.bind(this);
     this.scanPrinters = this.scanPrinters.bind(this);
@@ -47,6 +48,10 @@ class PreloadAPI {
 
   showSystemValues(callback: (sysVals: { [key: string]: string }) => void) {
     ipcRenderer.on("show-system-values", (event, sysVals) => callback(sysVals));
+  }
+
+  deleteEnvVariable(key: string) {
+    ipcRenderer.invoke("delete-env-variable", key);
   }
 
   reloadApp() {

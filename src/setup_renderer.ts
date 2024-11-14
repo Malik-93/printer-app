@@ -1,4 +1,5 @@
 import { cancelIcon, saveIcon } from "./icons/svgs";
+import { dialog } from "electron";
 import "./index.css";
 import "./styles/output.css";
 
@@ -96,7 +97,12 @@ class SetupRenderer {
     );
     cancelButton.innerHTML = cancelIcon;
     cancelButton.addEventListener("click", function () {
+      const keyToRemove = keyInput.value.trim();
       newFieldDiv.remove(); // Remove the new field container
+      if (keyToRemove) {
+        window.ipc.deleteEnvVariable(keyToRemove); // Delete the key-value pair
+        alert(`Key "${keyToRemove}" removed successfully.`);
+      }
     });
 
     // Append key input, value input, save button, and cancel button to the field container

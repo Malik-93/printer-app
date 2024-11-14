@@ -1,6 +1,7 @@
+import path from "path";
 import { BrowserWindow, ipcMain, app } from "electron";
 import fs from "fs-extra";
-import { envFilePath } from "../helpers";
+import { appResources, envFilePath } from "../helpers";
 
 class IPCMains {
   constructor() {
@@ -12,6 +13,7 @@ class IPCMains {
     ipcMain.on("set-title", this.setTitle);
     ipcMain.on("print", this.print);
     ipcMain.handle("save-env-variables", this.saveEnvVariables);
+    ipcMain.handle("delete-env-variable", this.removeEnvKey);
     ipcMain.handle("app-reload", this.reloadApp);
     ipcMain.handle("scan-printers", this.scanPrinters);
   }
@@ -74,7 +76,34 @@ class IPCMains {
       console.error("Error saving env variables:", err);
     }
   }
+  private async removeEnvKey(
+    event: Electron.IpcMainInvokeEvent,
+    keyToRemove: string
+  ) {
+    let envContent = "";
+    try {
+      envContent = await fs.readFile(envFilePath, "utf-8");
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+    }
 
+    const existingData = envContent
+      .split("\n")
+      .reduce((acc: { [key: string]: string }, line) => {
+        const [key, ...rest] = line.split("=");
+        if (key && key.trim() !== keyToRemove) {
+          acc[key.trim()] = rest.join("=").trim();
+        }
+        return acc;
+      }, {});
+
+    const updatedEnvContent = Object.entries(existingData)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("\n");
+
+    await fs.writeFile(envFilePath, updatedEnvContent);
+    console.log(`Key "${keyToRemove}" removed successfully.`);
+  }
   // Reload the main app window
   private reloadApp(event: Electron.IpcMainInvokeEvent) {
     const webContents = event.sender;

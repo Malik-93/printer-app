@@ -16,6 +16,7 @@ declare global {
       reloadApp: () => void;
       scanPrinters: () => void;
       setupWindow: () => void;
+      deleteEnvVariable: (key: string) => void;
     };
   }
 }
