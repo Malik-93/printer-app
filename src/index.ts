@@ -5,6 +5,7 @@ import LocalServer from "./backend/server";
 import path from "path";
 import fs from "fs-extra";
 import { appResources, envFilePath, getSystemValues } from "./helpers";
+import { IPC_EVENTS } from "./ipcs/events";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -31,7 +32,7 @@ class MainApp {
     this.initSetupWindow();
   }
   private initSetupWindow() {
-    ipcMain.on("setup-window", this.createSetupWindow);
+    ipcMain.on(IPC_EVENTS.SETUP_WINDOW, this.createSetupWindow);
   }
   public static getMainWindow(): BrowserWindow | null {
     return MainApp.mainWindow;
@@ -132,7 +133,10 @@ class MainApp {
 
     this.setupWindow.webContents.on("did-finish-load", async () => {
       const systemValues = await getSystemValues();
-      this.setupWindow.webContents.send("show-system-values", systemValues);
+      this.setupWindow.webContents.send(
+        IPC_EVENTS.SHOW_SYSTEM_VALUES,
+        systemValues
+      );
     });
     this.setupWindow.on("closed", () => {
       this.setupWindow = null;

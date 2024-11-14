@@ -14,6 +14,7 @@ import { BrowserWindow } from "electron";
 import { IncomingMessage, Server, ServerResponse } from "http";
 import MainApp from "../index";
 import PrinterScanner from "./utils/PrinterScanner";
+import { IPC_EVENTS } from "../ipcs/events";
 export default class LocalServer {
   private app: Express;
   private server: ReturnType<Express["listen"]>;
@@ -129,7 +130,7 @@ export default class LocalServer {
         this.logger.info(`LocalUrl: ${server_url}`);
 
         if (this.mainWindow)
-          this.mainWindow.webContents.send("ngrok-url", ngrok_url);
+          this.mainWindow.webContents.send(IPC_EVENTS.ON_NGROK_URL, ngrok_url);
 
         if (ngrok_url) {
           _globals.ngrok_url = ngrok_url;

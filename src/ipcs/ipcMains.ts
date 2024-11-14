@@ -2,6 +2,7 @@ import path from "path";
 import { BrowserWindow, ipcMain, app } from "electron";
 import fs from "fs-extra";
 import { appResources, envFilePath } from "../helpers";
+import { IPC_EVENTS } from "./events";
 
 class IPCMains {
   constructor() {
@@ -10,12 +11,12 @@ class IPCMains {
 
   // Initialize IPC handlers
   private initializeIPC() {
-    ipcMain.on("set-title", this.setTitle);
-    ipcMain.on("print", this.print);
-    ipcMain.handle("save-env-variables", this.saveEnvVariables);
-    ipcMain.handle("delete-env-variable", this.removeEnvKey);
-    ipcMain.handle("app-reload", this.reloadApp);
-    ipcMain.handle("scan-printers", this.scanPrinters);
+    ipcMain.on(IPC_EVENTS.SET_TITLE, this.setTitle);
+    ipcMain.on(IPC_EVENTS.PRINT, this.print);
+    ipcMain.handle(IPC_EVENTS.SAVE_ENV_VARIABLES, this.saveEnvVariables);
+    ipcMain.handle(IPC_EVENTS.DELETE_ENV_VARIABLE, this.removeEnvKey);
+    ipcMain.handle(IPC_EVENTS.RELOAD_APP, this.reloadApp);
+    ipcMain.handle(IPC_EVENTS.SCAN_PRINTERS, this.scanPrinters);
   }
 
   // Set window title
@@ -116,7 +117,7 @@ class IPCMains {
     const webContents = event.sender;
     const mainWindow = BrowserWindow.fromWebContents(webContents);
     const printers = await mainWindow.webContents.getPrintersAsync();
-    mainWindow.webContents.send("on-printers", printers);
+    mainWindow.webContents.send(IPC_EVENTS.ON_PRINTERS, printers);
   }
 }
 

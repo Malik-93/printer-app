@@ -4,6 +4,7 @@ import { BrowserWindow, app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import { _globals } from "./constants";
+import { IPC_EVENTS } from "../ipcs/events";
 
 // WinstonLogger class
 class WinstonLogger {
@@ -37,7 +38,7 @@ class WinstonLogger {
   // Custom function to run on every log entry
   private customLogFunction(log: LogEntry): void {
     if (this.mainWindow) {
-      this.mainWindow.webContents.send("log-message", `${log.message} \n`);
+      this.mainWindow.webContents.send(IPC_EVENTS.LOG_MESSAGE, `${log.message} \n`);
     }
     // You can add more custom operations here, such as remote logging, etc.
   }

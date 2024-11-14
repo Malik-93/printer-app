@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron/renderer";
+import { IPC_EVENTS } from "./ipcs/events";
 
 class PreloadAPI {
   constructor() {
@@ -17,52 +18,52 @@ class PreloadAPI {
   }
 
   setTitle(title: string) {
-    ipcRenderer.send("set-title", title);
+    ipcRenderer.send(IPC_EVENTS.SET_TITLE, title);
   }
 
   onPrinters(callback: (printers: Electron.PrinterInfo[]) => void) {
-    ipcRenderer.on("on-printers", (event, printers) => callback(printers));
+    ipcRenderer.on(IPC_EVENTS.ON_PRINTERS, (event, printers) => callback(printers));
   }
 
   print(printerName: string) {
-    ipcRenderer.send("print", printerName);
+    ipcRenderer.send(IPC_EVENTS.PRINT, printerName);
   }
 
   onLogMessage(callback: (message: string) => void) {
-    ipcRenderer.on("log-message", (event, message) => {
+    ipcRenderer.on(IPC_EVENTS.LOG_MESSAGE, (event, message) => {
       console.log("[preload].logMessage :", message);
       callback(message);
     });
   }
 
   onNgrokUrl(callback: (ngrokUrl: string) => void) {
-    ipcRenderer.on("ngrok-url", (event, ngrokUrl) => {
+    ipcRenderer.on(IPC_EVENTS.ON_NGROK_URL, (event, ngrokUrl) => {
       console.log("[preload].onNgrokUrl ran...");
       callback(ngrokUrl);
     });
   }
 
   saveEnvVariables(data: { [key: string]: string }) {
-    ipcRenderer.invoke("save-env-variables", data);
+    ipcRenderer.invoke(IPC_EVENTS.SAVE_ENV_VARIABLES, data);
   }
 
   showSystemValues(callback: (sysVals: { [key: string]: string }) => void) {
-    ipcRenderer.on("show-system-values", (event, sysVals) => callback(sysVals));
+    ipcRenderer.on(IPC_EVENTS.SHOW_SYSTEM_VALUES, (event, sysVals) => callback(sysVals));
   }
 
   deleteEnvVariable(key: string) {
-    ipcRenderer.invoke("delete-env-variable", key);
+    ipcRenderer.invoke(IPC_EVENTS.DELETE_ENV_VARIABLE, key);
   }
 
   reloadApp() {
-    ipcRenderer.invoke("app-reload");
+    ipcRenderer.invoke(IPC_EVENTS.RELOAD_APP);
   }
 
   scanPrinters() {
-    ipcRenderer.invoke("scan-printers");
+    ipcRenderer.invoke(IPC_EVENTS.SCAN_PRINTERS);
   }
   setupWindow() {
-    ipcRenderer.send("setup-window");
+    ipcRenderer.send(IPC_EVENTS.SETUP_WINDOW);
   }
 }
 
