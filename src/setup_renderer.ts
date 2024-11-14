@@ -98,11 +98,11 @@ class SetupRenderer {
     cancelButton.innerHTML = cancelIcon;
     cancelButton.addEventListener("click", async function () {
       const keyToRemove = keyInput.value.trim();
-      if (!keyToRemove) return newFieldDiv.remove(); // Remove the new field container
+      if (!keyToRemove) return newFieldDiv.remove(); // Remove the new field container if its empty
+      
       const isYes = await window.ipc.confirmationDialog(
         "Are you sure you want to remove this key-value?"
       );
-      console.log("isYes:", isYes);
       
       if (isYes) {
         window.ipc.deleteEnvVariable(keyToRemove); // Delete the key-value pair

@@ -71,8 +71,8 @@ class PreloadAPI {
     ipcRenderer.send(IPC_EVENTS.SETUP_WINDOW);
   }
 
-  confirmationDialog(message: string) {
-    ipcRenderer.invoke(IPC_EVENTS.CONFIRMATION_DIALOG, message);
+  async confirmationDialog(message: string) {
+    return await ipcRenderer.invoke(IPC_EVENTS.CONFIRMATION_DIALOG, message);
   }
 }
 
