@@ -3,7 +3,7 @@ import { config } from "./config";
 import { BrowserWindow, app } from "electron";
 import * as fs from "fs";
 import * as path from "path";
-import { _globals } from "./constants";
+import { _globals } from "../constants";
 
 // WinstonLogger class
 class WinstonLogger {

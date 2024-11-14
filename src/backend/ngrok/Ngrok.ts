@@ -1,4 +1,4 @@
-import { _globals, port } from "../constants";
+import { _globals, port } from "../../constants";
 import path from "path";
 import fs from "fs";
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";

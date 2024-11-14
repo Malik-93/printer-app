@@ -2,7 +2,7 @@ import { exec } from "child_process";
 import fs from "fs";
 import util from "util";
 import { IRolloResults } from "../interfaces/printerInterface";
-import { _globals } from "../constants";
+import { _globals } from "../../constants";
 const _exec = util.promisify(exec);
 export const unlinkFile = (filePath: string) => {
   if (fs.existsSync(filePath)) {
