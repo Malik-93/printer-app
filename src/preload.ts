@@ -15,6 +15,7 @@ class PreloadAPI {
     this.reloadApp = this.reloadApp.bind(this);
     this.scanPrinters = this.scanPrinters.bind(this);
     this.setupWindow = this.setupWindow.bind(this);
+    this.confirmationDialog = this.confirmationDialog.bind(this);
   }
 
   setTitle(title: string) {
@@ -22,7 +23,9 @@ class PreloadAPI {
   }
 
   onPrinters(callback: (printers: Electron.PrinterInfo[]) => void) {
-    ipcRenderer.on(IPC_EVENTS.ON_PRINTERS, (event, printers) => callback(printers));
+    ipcRenderer.on(IPC_EVENTS.ON_PRINTERS, (event, printers) =>
+      callback(printers)
+    );
   }
 
   print(printerName: string) {
@@ -31,7 +34,7 @@ class PreloadAPI {
 
   onLogMessage(callback: (message: string) => void) {
     ipcRenderer.on(IPC_EVENTS.LOG_MESSAGE, (event, message) => {
-      console.log("[preload].logMessage :", message);
+      // console.log("[preload].logMessage :", message);
       callback(message);
     });
   }
@@ -48,7 +51,9 @@ class PreloadAPI {
   }
 
   showSystemValues(callback: (sysVals: { [key: string]: string }) => void) {
-    ipcRenderer.on(IPC_EVENTS.SHOW_SYSTEM_VALUES, (event, sysVals) => callback(sysVals));
+    ipcRenderer.on(IPC_EVENTS.SHOW_SYSTEM_VALUES, (event, sysVals) =>
+      callback(sysVals)
+    );
   }
 
   deleteEnvVariable(key: string) {
@@ -64,6 +69,10 @@ class PreloadAPI {
   }
   setupWindow() {
     ipcRenderer.send(IPC_EVENTS.SETUP_WINDOW);
+  }
+
+  confirmationDialog(message: string) {
+    ipcRenderer.invoke(IPC_EVENTS.CONFIRMATION_DIALOG, message);
   }
 }
 

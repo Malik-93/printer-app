@@ -10,4 +10,5 @@ export const IPC_EVENTS = {
   RELOAD_APP: "app-reload",
   SCAN_PRINTERS: "scan-printers",
   SETUP_WINDOW: "setup-window",
+  CONFIRMATION_DIALOG: "confirmation-dialog",
 };

@@ -1,7 +1,6 @@
-import path from "path";
-import { BrowserWindow, ipcMain, app } from "electron";
+import { BrowserWindow, ipcMain, dialog } from "electron";
 import fs from "fs-extra";
-import { appResources, envFilePath } from "../helpers";
+import { envFilePath } from "../helpers";
 import { IPC_EVENTS } from "./events";
 
 class IPCMains {
@@ -17,6 +16,10 @@ class IPCMains {
     ipcMain.handle(IPC_EVENTS.DELETE_ENV_VARIABLE, this.removeEnvKey);
     ipcMain.handle(IPC_EVENTS.RELOAD_APP, this.reloadApp);
     ipcMain.handle(IPC_EVENTS.SCAN_PRINTERS, this.scanPrinters);
+    ipcMain.handle(
+      IPC_EVENTS.CONFIRMATION_DIALOG,
+      this.handleConfirmationDialog
+    );
   }
 
   // Set window title
@@ -118,6 +121,23 @@ class IPCMains {
     const mainWindow = BrowserWindow.fromWebContents(webContents);
     const printers = await mainWindow.webContents.getPrintersAsync();
     mainWindow.webContents.send(IPC_EVENTS.ON_PRINTERS, printers);
+  }
+  private async handleConfirmationDialog(
+    event: Electron.IpcMainInvokeEvent,
+    message: string
+  ): Promise<boolean> {
+    const webContents = event.sender;
+    const mainWindow = BrowserWindow.fromWebContents(webContents);
+    const result = await dialog.showMessageBox(mainWindow, {
+      type: "question",
+      buttons: ["Yes", "No"],
+      defaultId: 1, // Default to 'No' if Enter is pressed
+      title: "Confirm Action",
+      message,
+    });
+    console.log("result.response", result.response);
+
+    return result.response === 0; // Returns true if 'Yes' is clicked, false if 'No'
   }
 }
 

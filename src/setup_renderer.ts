@@ -96,11 +96,17 @@ class SetupRenderer {
       "focus:outline-none"
     );
     cancelButton.innerHTML = cancelIcon;
-    cancelButton.addEventListener("click", function () {
+    cancelButton.addEventListener("click", async function () {
       const keyToRemove = keyInput.value.trim();
-      newFieldDiv.remove(); // Remove the new field container
-      if (keyToRemove) {
+      if (!keyToRemove) return newFieldDiv.remove(); // Remove the new field container
+      const isYes = await window.ipc.confirmationDialog(
+        "Are you sure you want to remove this key-value?"
+      );
+      console.log("isYes:", isYes);
+      
+      if (isYes) {
         window.ipc.deleteEnvVariable(keyToRemove); // Delete the key-value pair
+        newFieldDiv.remove(); // Remove the new field container
         alert(`Key "${keyToRemove}" removed successfully.`);
       }
     });

@@ -17,6 +17,7 @@ declare global {
       scanPrinters: () => void;
       setupWindow: () => void;
       deleteEnvVariable: (key: string) => void;
+      confirmationDialog: (message: string) => Promise<boolean>;
     };
   }
 }
