@@ -1,7 +1,7 @@
 import path from "path";
-import { config } from "../backend/config";
+import { config } from "../config";
 import { BrowserWindow } from "electron";
-import WinstonLogger from "../backend/logger";
+import WinstonLogger from "../logger";
 export const port: number = parseInt(config.port || "0") || 9000;
 export const isDev = config.env === "development";
 export let _globals = {

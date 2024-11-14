@@ -2,7 +2,7 @@ import fs from "fs";
 import { FullRequest, FullResponse, Printer } from "ipp";
 import { get_ip_from_mac } from "../utils";
 import { IResponse } from "./../interfaces/printerInterface";
-import { _globals } from "../../constants";
+import { _globals } from "../constants";
 export default class PrinterController {
   public print(
     _printer: string,

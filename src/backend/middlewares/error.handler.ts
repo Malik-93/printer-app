@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../models/Error";
-import { _globals } from "../../constants";
+import { _globals } from "../constants";
 /**
  * Custom error handler to standardize error objects returned to
  * the client

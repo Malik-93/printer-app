@@ -5,7 +5,7 @@ import PrinterRouter from "./router/printer.routes";
 import PrinterController from "./controllers/printer.controller";
 import path from "path";
 import errorHandler from "./middlewares/error.handler";
-import { _globals, root_dir } from "../constants";
+import { _globals, root_dir } from "./constants";
 import Ngrok from "./ngrok/Ngrok";
 import WinstonLogger from "./logger";
 import { config } from "./config";
