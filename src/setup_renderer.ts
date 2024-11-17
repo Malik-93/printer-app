@@ -1,5 +1,4 @@
 import { cancelIcon, saveIcon } from "./icons/svgs";
-import { dialog } from "electron";
 import "./index.css";
 import "./styles/output.css";
 

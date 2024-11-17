@@ -12,7 +12,12 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "prisma-migrate": "npx prisma migrate dev",
+    "prisma-db-push": "npx prisma db push",
+    "prisma-db-pull": "npx prisma db pull",
+    "prisma-gen-client": "npx prisma generate",
+    "prisma-connect": "yarn prisma-gen-client"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.5.0",
@@ -55,15 +60,16 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "5.22.0",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "electron-squirrel-startup": "^1.0.1",
     "express": "^4.21.1",
     "ipp": "^2.0.1",
     "multer": "^1.4.5-lts.1",
     "ngrok": "^5.0.0-beta.2",
     "node-dns-sd": "^1.0.1",
+    "prisma": "^5.22.0",
     "winston": "^3.16.0"
   }
 }
