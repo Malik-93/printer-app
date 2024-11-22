@@ -119,7 +119,7 @@ class MainApp {
     MainApp.mainWindow.webContents.on("did-stop-loading", () => {
       this.startServer();
       autoUpdater.setFeedURL({
-        url: `http://localhost:80/update/${platform}/${version}/${channel}`,
+        url: `http://192.168.77.146:80/update/${platform}/${version}/${channel}`,
       });
 
       setInterval(() => {
