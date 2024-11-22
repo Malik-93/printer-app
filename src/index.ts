@@ -1,4 +1,11 @@
-import { app, BrowserWindow, ipcMain, screen } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  autoUpdater,
+  dialog,
+} from "electron";
 import IPCMains from "./ipcs/ipcMains";
 import IPCRenderers from "./ipcs/ipcRenderers";
 import LocalServer from "./backend/server";
@@ -6,6 +13,10 @@ import path from "path";
 import fs from "fs-extra";
 import { appResources, envFilePath, getSystemValues } from "./helpers";
 import { IPC_EVENTS } from "./ipcs/events";
+import os from "os";
+const platform = os.platform() + "_" + os.arch(), // usually returns darwin_64
+  version = app.getVersion(),
+  channel = "stable";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -105,9 +116,41 @@ class MainApp {
       this.stopLocalServer.bind(this)
     );
 
-    MainApp.mainWindow.webContents.on("did-stop-loading", () =>
-      this.startServer()
-    );
+    MainApp.mainWindow.webContents.on("did-stop-loading", () => {
+      this.startServer();
+      autoUpdater.setFeedURL({
+        url: `http://localhost:80/update/${platform}/${version}/${channel}`,
+      });
+
+      setInterval(() => {
+        autoUpdater.checkForUpdates();
+      }, 60000);
+
+      autoUpdater.on(
+        "update-downloaded",
+        (event, releaseNotes, releaseName) => {
+          const dialogOpts: Electron.MessageBoxOptions = {
+            type: "info",
+            buttons: ["Restart", "Later"],
+            title: "Application Update",
+            message: process.platform === "win32" ? releaseNotes : releaseName,
+            detail:
+              "A new version has been downloaded. Restart the application to apply the updates.",
+          };
+
+          dialog
+            .showMessageBox(MainApp.mainWindow, dialogOpts)
+            .then((returnValue) => {
+              if (returnValue.response === 0) autoUpdater.quitAndInstall();
+            });
+        }
+      );
+
+      autoUpdater.on("error", (message) => {
+        console.error("There was a problem updating the application");
+        console.error(message);
+      });
+    });
 
     // if (process.env.NODE_ENV === "development") {
     //   MainApp.mainWindow.webContents.openDevTools();
