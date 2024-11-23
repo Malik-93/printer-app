@@ -2,14 +2,15 @@ import { app, autoUpdater, BrowserWindow, dialog } from "electron";
 import path from "path";
 import fs from "fs-extra";
 import os from "os";
+import WinstonLogger from "../backend/logger";
 export const appResources = app.getPath("userData");
 export const envFilePath = path.join(appResources, ".env");
+const logger = new WinstonLogger();
 const platform = os.platform() + "_" + os.arch(), // usually returns darwin_64
   version = app.getVersion(),
   channel = "stable",
-  // url = `http://192.168.77.146:80/update/${platform}/${version}/${channel}`;
-  url = `http://192.168.1.5:80/update/osx_64/1.0.0/stable`;
-console.log("URL", url);
+  url = `http://localhost:1337/update/${platform}/${version}/${channel}`;
+logger.info("URL", url);
 // Parse the environment variables from a buffer
 export const parseEnvBuffer = (buffer: Buffer): { [key: string]: string } => {
   const envObject: { [key: string]: string } = {};
@@ -36,34 +37,41 @@ export const getSystemValues = async (): Promise<{ [key: string]: string }> => {
 };
 
 export const checkForAppUpdates = async (mainWindow: BrowserWindow) => {
-  autoUpdater.setFeedURL({
-    url,
-  });
-  setInterval(() => {
-    console.log("checkForAppUpdates ran...");
-    autoUpdater.checkForUpdates();
-  }, 6000);
+  try {
+    logger.info("Setting feed URL...");
+    autoUpdater.setFeedURL({
+      url,
+    });
 
-  autoUpdater.on(
-    "update-downloaded",
-    async (event, releaseNotes, releaseName) => {
-      console.log("update-downloaded ran...");
-      const dialogOpts: Electron.MessageBoxOptions = {
-        type: "info",
-        buttons: ["Restart", "Later"],
-        title: "Application Update",
-        message: process.platform === "win32" ? releaseNotes : releaseName,
-        detail:
-          "A new version has been downloaded. Restart the application to apply the updates.",
-      };
+    setInterval(() => {
+      logger.info("checkForUpdates interval ran...");
+      autoUpdater.checkForUpdates();
+    }, 6000);
 
-      const returnValue = await dialog.showMessageBox(mainWindow, dialogOpts);
-      if (returnValue.response === 0) autoUpdater.quitAndInstall();
-    }
-  );
+    autoUpdater.on(
+      "update-downloaded",
+      async (event, releaseNotes, releaseName) => {
+        logger.info("update-downloaded ran...");
+        const dialogOpts: Electron.MessageBoxOptions = {
+          type: "info",
+          buttons: ["Restart", "Later"],
+          title: "Application Update",
+          message: process.platform === "win32" ? releaseNotes : releaseName,
+          detail:
+            "A new version has been downloaded. Restart the application to apply the updates.",
+        };
 
-  autoUpdater.on("error", (message) => {
-    console.log("There was a problem updating the application");
-    console.error(message);
-  });
+        const returnValue = await dialog.showMessageBox(mainWindow, dialogOpts);
+        if (returnValue.response === 0) autoUpdater.quitAndInstall();
+      }
+    );
+
+    autoUpdater.on("error", (message) => {
+      logger.info(`There was a problem updating the application ${message}`);
+      console.error(message);
+    });
+  } catch (error) {
+    logger.info(`Catch Block: ${error}`);
+    console.error("[checkForAppUpdates] An error accured", error);
+  }
 };

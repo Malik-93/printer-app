@@ -11,17 +11,20 @@ import {
   getSystemValues,
 } from "./helpers";
 import { IPC_EVENTS } from "./ipcs/events";
+import WinstonLogger from "./backend/logger";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 class MainApp {
   private server: LocalServer;
+  private logger: WinstonLogger;
   private static mainWindow: BrowserWindow | null;
   private setupWindow: BrowserWindow | null;
 
   constructor() {
     this.server = new LocalServer();
+    this.logger = new WinstonLogger();
     const ipcMains = new IPCMains();
     MainApp.mainWindow = null;
     this.setupWindow = null;
@@ -34,6 +37,9 @@ class MainApp {
     app.on("window-all-closed", this.onWindowAllClosed.bind(this));
     app.on("activate", this.onActivate.bind(this));
     app.on("will-continue-activity", this.onWillContinueActivity.bind(this));
+    app.on("before-quit", () => {
+      this.server.close();
+    });
     this.initSetupWindow();
   }
   private initSetupWindow() {
@@ -91,7 +97,7 @@ class MainApp {
     console.log("Server Stopped");
   }
 
-  private createMainWindow() {
+  private async createMainWindow() {
     const { height, width } = screen.getPrimaryDisplay().workAreaSize;
     MainApp.mainWindow = new BrowserWindow({
       height,
@@ -110,11 +116,12 @@ class MainApp {
       this.stopLocalServer.bind(this)
     );
 
-    MainApp.mainWindow.webContents.on("did-stop-loading", async () => {
+    MainApp.mainWindow.webContents.on("did-stop-loading", () => {
       this.startServer();
-      await checkForAppUpdates(MainApp.mainWindow);
     });
 
+    this.logger.info(`app.isPackaged: ${app.isPackaged}`);
+    if (app.isPackaged) await checkForAppUpdates(MainApp.mainWindow);
     // if (process.env.NODE_ENV === "development") {
     //   MainApp.mainWindow.webContents.openDevTools();
     // }
