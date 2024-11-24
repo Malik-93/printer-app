@@ -9,7 +9,7 @@ const logger = new WinstonLogger();
 const platform = os.platform() + "_" + os.arch(), // usually returns darwin_64
   version = app.getVersion(),
   channel = "stable",
-  url = `http://localhost:1337/update/${platform}/${version}/${channel}`;
+  url = `http://192.168.1.5:1337/update/${platform}/${version}/${channel}`;
 logger.info("URL", url);
 // Parse the environment variables from a buffer
 export const parseEnvBuffer = (buffer: Buffer): { [key: string]: string } => {
@@ -46,8 +46,10 @@ export const checkForAppUpdates = async (mainWindow: BrowserWindow) => {
     setInterval(() => {
       logger.info("checkForUpdates interval ran...");
       autoUpdater.checkForUpdates();
-    }, 6000);
-
+    }, 60 * 1000); // 
+autoUpdater.on("checking-for-update", () => logger.info("Checking for updates..."))
+autoUpdater.on("update-available", () => logger.info("Update available."))
+autoUpdater.on("update-not-available", () => logger.info("Update not available."))
     autoUpdater.on(
       "update-downloaded",
       async (event, releaseNotes, releaseName) => {
@@ -67,11 +69,11 @@ export const checkForAppUpdates = async (mainWindow: BrowserWindow) => {
     );
 
     autoUpdater.on("error", (message) => {
-      logger.info(`There was a problem updating the application ${message}`);
+      logger.error(`There was a problem updating the application ${message}`);
       console.error(message);
     });
   } catch (error) {
-    logger.info(`Catch Block: ${error}`);
+    logger.error(`Catch Block: ${error}`);
     console.error("[checkForAppUpdates] An error accured", error);
   }
 };
