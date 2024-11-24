@@ -1,0 +1,292 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model AzureImages {
+  Id           Int       @default(autoincrement())
+  VendorId     String?   @db.NVarChar(100)
+  ItemNumber   String?   @db.NVarChar(100)
+  FileName     String?   @db.NVarChar(1024)
+  FileFullname String?   @db.NVarChar(1024)
+  CreatedOn    DateTime?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model PrintersPerStore {
+  ID           Int     @default(autoincrement())
+  printer_name String  @db.VarChar(255)
+  printer_ip   String? @db.VarChar(255)
+  printer_mac  String? @db.VarChar(255)
+  store_email  String? @db.VarChar(255)
+
+  @@ignore
+}
+
+model WsBillboards {
+  ID          Int       @id(map: "PK_WsBillboards") @default(autoincrement())
+  alias       String?   @db.VarChar(255)
+  description String?   @db.VarChar(255)
+  order       Int?
+  is_enabled  Boolean?
+  banner_url  String?   @db.VarChar(Max)
+  created_on  DateTime?
+  created_by  String?   @db.VarChar(255)
+}
+
+model WsCategories {
+  ID       Int    @id(map: "PK_WsCategories") @default(autoincrement())
+  Category String @db.VarChar(50)
+  Type     String @db.VarChar(50)
+}
+
+model WsDepartments {
+  dep        String       @id(map: "PK_WsDepartments") @db.NVarChar(255)
+  alias      String?      @db.VarChar(255)
+  order      Int?
+  app_bar    Boolean?
+  banner_url String?      @db.VarChar(Max)
+  created_on DateTime?    @default(dbgenerated("sysutcdatetime()"), map: "DEFAULT_WsDepartments_created_on")
+  created_by String?      @db.VarChar(255)
+  WsProducts WsProducts[]
+}
+
+model WsHomeBanners {
+  ID        Int    @id(map: "PK_WsHomeBanners") @default(autoincrement())
+  dep       String @db.VarChar(255)
+  image_url String @db.VarChar(Max)
+}
+
+model WsImages {
+  vendor_id   Int
+  item_number String    @db.NVarChar(255)
+  image_url   String?   @db.VarChar(Max)
+  created_on  DateTime? @default(dbgenerated("sysutcdatetime()"), map: "DEFAULT_WsImages_created_on")
+  created_by  String?   @db.VarChar(255)
+
+  @@id([vendor_id, item_number], map: "PK_WsImages")
+}
+
+model WSJob {
+  ID               Int                @id(map: "PK_WSJob") @default(autoincrement())
+  Name             String             @db.VarChar(255)
+  Description      String?            @db.VarChar(Max)
+  Type             String?            @db.VarChar(100)
+  Category         String?            @db.VarChar(100)
+  CreatedOn        DateTime?          @default(dbgenerated("sysutcdatetime()"), map: "DEFAULT_WSJob_CreatedOn")
+  Active           Boolean            @default(true)
+  StoreId          Int
+  Status           String?            @db.VarChar(50)
+  CreatedBy        String             @db.VarChar(255)
+  MaxSalary        Float              @default(0) @db.Money
+  MinSalary        Float              @default(0, map: "WSJob_MinSalay_df") @db.Money
+  SalaryType       String             @default("") @db.VarChar(50)
+  WsStore          WsStore            @relation(fields: [StoreId], references: [ID], onUpdate: NoAction, map: "FK_WSJob_WsStore")
+  WSJobApplication WSJobApplication[]
+}
+
+model WSJobApplication {
+  ID                                 Int                                  @id(map: "PK_WSJobApplication") @default(autoincrement())
+  JobId                              Int
+  UserId                             Int
+  IsValid                            String?                              @db.VarChar(50)
+  Status                             String?                              @db.VarChar(50)
+  Active                             Boolean
+  CreatedBy                          String?                              @db.VarChar(255)
+  CreatedOn                          DateTime?                            @default(dbgenerated("sysutcdatetime()"), map: "DEFAULT_WSJobApplication_CreatedOn")
+  IsDenied                           Boolean                              @default(false)
+  WSJob                              WSJob                                @relation(fields: [JobId], references: [ID], onDelete: Cascade, map: "FK_WSJobApplication_WSJob")
+  WsUser                             WsUser                               @relation(fields: [UserId], references: [ID], onDelete: Cascade, map: "FK_WSJobApplication_WsUser")
+  WSJobApplicationEducation          WSJobApplicationEducation[]
+  WSJobApplicationFeedback           WSJobApplicationFeedback[]
+  WSJobApplicationPreviousEmployment WSJobApplicationPreviousEmployment[]
+  WSJobApplicationReference          WSJobApplicationReference[]
+}
+
+model WSJobApplicationEducation {
+  ID               Int               @id(map: "PK_WSJobApplicationEducation") @default(autoincrement())
+  JobApplicationId Int?
+  EducationLevel   String            @db.VarChar(50)
+  Name             String            @db.VarChar(255)
+  Address          String            @db.VarChar(255)
+  FromDate         String            @db.VarChar(4)
+  ToDate           String?           @db.VarChar(4)
+  IsGraduated      String            @db.VarChar(10)
+  IsValid          String?           @db.VarChar(50)
+  WSJobApplication WSJobApplication? @relation(fields: [JobApplicationId], references: [ID], onDelete: Cascade, map: "FK_WSJobApplicationEducation_WSJobApplication")
+}
+
+model WSJobApplicationFeedback {
+  ID                    Int                     @id(map: "PK_WSJobApplicationFeedback") @default(autoincrement())
+  JobApplicationID      Int
+  Feedback              String                  @db.VarChar(Max)
+  CreatedBy             String                  @db.VarChar(255)
+  CreatedOn             DateTime
+  WSJobApplication      WSJobApplication        @relation(fields: [JobApplicationID], references: [ID], onDelete: Cascade, map: "FK_WSJobApplicationFeedback_WSJobApplication")
+  WsJobApplicationReply WsJobApplicationReply[]
+}
+
+model WSJobApplicationPreviousEmployment {
+  ID               Int               @id(map: "PK_WSJobApplicationPreviousEmployment") @default(autoincrement())
+  JobApplicationId Int?
+  Company          String            @db.VarChar(255)
+  Supervisor       String            @db.VarChar(255)
+  Address          String            @db.VarChar(255)
+  FromDate         DateTime          @db.Date
+  ToDate           DateTime?         @db.Date
+  JobTitle         String            @db.VarChar(255)
+  EndingSalary     Float?            @db.Money
+  IsHourlyRate     String?           @db.VarChar(1)
+  LeavingReason    String?           @db.VarChar(Max)
+  IsValid          String?           @db.VarChar(50)
+  WSJobApplication WSJobApplication? @relation(fields: [JobApplicationId], references: [ID], onDelete: Cascade, map: "FK_WSJobApplicationPreviousEmployment_WSJobApplication")
+}
+
+model WSJobApplicationReference {
+  ID               Int               @id(map: "PK_WSJobApplicationReference") @default(autoincrement())
+  JobApplicationId Int?
+  FullName         String            @db.VarChar(255)
+  Relationship     String            @db.VarChar(255)
+  Company          String            @db.VarChar(255)
+  Phone            String            @db.VarChar(50)
+  Email            String            @db.VarChar(255)
+  IsValid          String?           @db.VarChar(50)
+  WSJobApplication WSJobApplication? @relation(fields: [JobApplicationId], references: [ID], onDelete: Cascade, map: "FK_WSJobApplicationReference_WSJobApplication")
+}
+
+model WsJobApplicationReply {
+  ID                       Int                      @id(map: "PK_WsJobApplicationReply") @default(autoincrement())
+  FeedbackID               Int
+  Message                  String                   @db.VarChar(Max)
+  CreatedBy                String                   @db.VarChar(255)
+  CreatedOn                DateTime
+  ModifiedOn               DateTime?
+  WSJobApplicationFeedback WSJobApplicationFeedback @relation(fields: [FeedbackID], references: [ID], onDelete: Cascade, map: "FK_WsJobApplicationReply_WSJobApplicationFeedback")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model WsMenu {
+  Code     String? @db.NVarChar(6)
+  Category String? @db.NVarChar(18)
+  L1       String? @db.NVarChar(24)
+  L2       String? @db.NVarChar(17)
+  L3       String? @db.NVarChar(15)
+  L4       String? @db.NVarChar(12)
+  ImageURL Int?
+
+  @@ignore
+}
+
+model WsProducts {
+  vendor_id        Int
+  item_number      String        @db.NVarChar(255)
+  description      String?       @db.VarChar(Max)
+  ai_description   String?       @db.VarChar(Max)
+  ai_name          String?       @db.VarChar(Max)
+  dep              String        @db.NVarChar(255)
+  bucket           String        @db.VarChar(255)
+  original_img_url String        @db.VarChar(Max)
+  final_img_url    String?       @db.VarChar(Max)
+  top_sold         Int?
+  is_home          Boolean?
+  is_new_arrival   Boolean?
+  status           String?       @default("review", map: "DEFAULT_WsProducts_status") @db.VarChar(255)
+  created_on       DateTime?     @default(dbgenerated("sysdatetime()"), map: "DEFAULT_WsProducts_created_on")
+  created_by       String?       @db.VarChar(255)
+  WsDepartments    WsDepartments @relation(fields: [dep], references: [dep])
+
+  @@id([item_number, vendor_id], map: "PK_WsProducts")
+}
+
+model WsProfile {
+  ID         Int     @id(map: "PK_WsProfile") @default(autoincrement())
+  FirstName  String  @db.VarChar(255)
+  MiddleName String? @db.VarChar(255)
+  LastName   String  @db.VarChar(255)
+  Gender     String  @db.VarChar(255)
+  Age        Int
+  Email      String  @unique
+  Auth0Id    String  @db.VarChar(Max)
+}
+
+model WSState {
+  ID               Int          @id(map: "PK_WSState") @default(autoincrement())
+  state            String?      @db.VarChar(50)
+  st_licenseNumber String?      @db.VarChar(50)
+  st_expiryDate    DateTime?
+  st_fileUrl       String?      @db.VarChar(50)
+  ll_licenseNumber String?      @db.VarChar(50)
+  ll_expiryDate    DateTime?
+  ll_fileUrl       String?      @db.VarChar(50)
+  taxExemptId      Int?
+  WSTaxExempt      WSTaxExempt? @relation(fields: [taxExemptId], references: [ID], onDelete: Cascade, map: "FK_WSState_WSTaxExempt")
+}
+
+model WsStore {
+  ID         Int     @id(map: "PK_WsStore") @default(autoincrement())
+  Name       String  @db.VarChar(50)
+  Address    String? @db.VarChar(Max)
+  Email      String? @db.VarChar(255)
+  BookingUrl String? @db.VarChar(Max)
+  Latitude   Float   @default(0)
+  Longitude  Float   @default(0)
+  PlaceID    String  @default("") @db.VarChar(50)
+  WSJob      WSJob[]
+}
+
+model WSTaxExempt {
+  ID                      Int       @id(map: "PK_WSTaxExempt") @default(autoincrement())
+  organization            String?   @db.VarChar(50)
+  organizationDescription String?   @db.VarChar(50)
+  number                  String?   @db.VarChar(50)
+  country                 String?   @db.VarChar(50)
+  streetAddress           String?   @db.VarChar(50)
+  city                    String?   @db.VarChar(50)
+  state                   String?   @db.VarChar(50)
+  zip                     String?   @db.VarChar(50)
+  mobileNumber            String?   @db.VarChar(50)
+  apartment               String?   @db.VarChar(50)
+  purpose                 String?   @db.VarChar(50)
+  organizationType        String?   @db.VarChar(50)
+  name                    String?   @db.VarChar(50)
+  email                   String?   @db.VarChar(50)
+  status                  String?   @db.VarChar(50)
+  states                  String?   @db.VarChar(50)
+  signerName              String?   @db.VarChar(Max)
+  signerTitle             String?   @db.VarChar(Max)
+  signature               String?   @db.VarChar(Max)
+  certificateType         String?   @db.VarChar(Max)
+  WSState                 WSState[]
+}
+
+model WsUser {
+  ID                      Int                @id(map: "PK_WsUser") @default(autoincrement())
+  Name                    String             @db.VarChar(255)
+  MiddleName              String?            @db.VarChar(255)
+  LastName                String             @db.VarChar(255)
+  Street                  String             @db.VarChar(255)
+  Apartment               String?            @db.VarChar(255)
+  City                    String             @db.VarChar(255)
+  State                   String             @db.VarChar(255)
+  Zip                     String             @db.VarChar(255)
+  Phone                   String             @db.VarChar(50)
+  SocialSecurity          String             @db.VarChar(50)
+  CanWorkInUs             String             @db.VarChar(10)
+  IsLegalAge              String             @db.VarChar(10)
+  ServedInMilitary        String?            @db.VarChar(10)
+  MilitaryBranch          String?            @db.VarChar(255)
+  MilitaryRank            String?            @db.VarChar(255)
+  MilitaryTypeOfDischarge String?            @db.VarChar(255)
+  ResumeUrl               String?            @db.VarChar(Max)
+  Email                   String             @db.VarChar(255)
+  Auth0Id                 String             @db.VarChar(Max)
+  WSJobApplication        WSJobApplication[]
+}
